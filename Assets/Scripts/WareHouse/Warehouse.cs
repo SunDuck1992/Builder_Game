@@ -23,9 +23,12 @@ public class Warehouse : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.gameObject.GetComponent<Player>())
+        if (other.gameObject.GetComponent<Player>())
         {
-            StopCoroutine(_coroutine);
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
         }
     }
 

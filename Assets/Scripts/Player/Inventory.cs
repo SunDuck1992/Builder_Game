@@ -47,6 +47,6 @@ public class Inventory : MonoBehaviour
 
     public GameObject GetItems(int number)
     {
-        return _items[number];
+        return _items[number - 1];
     }
 }
