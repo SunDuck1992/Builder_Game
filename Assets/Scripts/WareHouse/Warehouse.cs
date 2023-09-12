@@ -11,7 +11,7 @@ public class Warehouse : MonoBehaviour
     [SerializeField] private float _delay;
 
     private Coroutine _coroutine;
-    private int NumberBrick => 5; /*_inventory.CurrentCount;*/
+    //private int NumberBrick => 5; _inventory.CurrentCount;
 
     private ObjectPool _objectPool;
 
@@ -41,7 +41,7 @@ public class Warehouse : MonoBehaviour
 
     private IEnumerator PickUpBrick(Inventory inventory)
     {
-        while (NumberBrick < inventory.MaxCount)
+        while (inventory.CurrentCount < inventory.MaxCount)
         {
             yield return new WaitForSeconds(_delay);
         
