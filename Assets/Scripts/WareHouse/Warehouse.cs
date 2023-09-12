@@ -5,14 +5,11 @@ using UnityEngine;
 
 public class Warehouse : MonoBehaviour
 {
-    //[SerializeField] private Inventory _inventory;
     [SerializeField] private GameObject _brickPrefab;
     [SerializeField] private Transform _handPosition;
     [SerializeField] private float _delay;
 
     private Coroutine _coroutine;
-    //private int NumberBrick => 5; _inventory.CurrentCount;
-
     private ObjectPool _objectPool;
 
     private void Start()
