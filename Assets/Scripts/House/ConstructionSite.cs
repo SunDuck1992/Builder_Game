@@ -5,27 +5,27 @@ using UnityEngine;
 
 public class ConstructionSite : MonoBehaviour
 {
-    [SerializeField] private Inventory _inventory;
-    [SerializeField] private Player _player;
+    //[SerializeField] private Inventory _inventory;
+    //[SerializeField] private Player _player;
     [SerializeField] private House _house;
     [SerializeField] private float _delay;
     [SerializeField] private float _speed;
 
     private Coroutine _coroutine;
 
-    private int _currentNumber => _inventory.CurrentCount;
+    //private int _currentNumber => _inventory.CurrentCount;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Player>())
+        if (other.TryGetComponent<Player>(out Player player))
         {
-            _coroutine = StartCoroutine(BuildHouse());
+            _coroutine = StartCoroutine(BuildHouse(player.Inventory));
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Player>())
+        if (other.TryGetComponent<Player>(out Player player))
         {
             if (_coroutine != null)
             {
@@ -34,52 +34,54 @@ public class ConstructionSite : MonoBehaviour
         }
     }
 
-    private IEnumerator BuildHouse()
+    private IEnumerator BuildHouse(Inventory inventory)
     {
-        while (_currentNumber > 0)
+        while (inventory.CurrentCount > 0 & _house.IsCanBuild)
         {
-            GameObject currentPlayerBrick = _inventory.GetItems(_currentNumber);
-
-            GameObject currentHouseBrick = _house.GetCell(_house.BuiltBricks);
-
-            if(currentPlayerBrick == null  || currentHouseBrick == null)
-            {
-                yield break;
-            }
-
-            _inventory.RemoveItem(currentPlayerBrick);
-
-            Vector3 startPosition = currentPlayerBrick.transform.position;
-            Quaternion startRotation = currentPlayerBrick.transform.rotation;
-
-            Vector3 endPosition = currentHouseBrick.transform.position;
-            Quaternion endRotation = currentHouseBrick.transform.rotation;
-
-            Vector3 startScale = currentPlayerBrick.transform.localScale;
-            Vector3 endScale = currentHouseBrick.transform.localScale;
-
-            float startTime = Time.time;
-            float journeyLength = Vector3.Distance(startPosition, endPosition);
-
-            while (Vector3.Distance(startPosition, endPosition) > 0)
-            {
-                float distCovered = (Time.time - startTime) * _speed;
-                float fracJourney = distCovered / journeyLength;
-
-                currentPlayerBrick.transform.position = Vector3.Lerp(startPosition, endPosition, fracJourney);
-                //currentPlayerBrick.transform.position = Vector3.MoveTowards(startPosition, endPosition, _speed * Time.deltaTime);
-                currentPlayerBrick.transform.rotation = Quaternion.Lerp(startRotation, endRotation, fracJourney);
-
-                currentPlayerBrick.transform.localScale = Vector3.Lerp(startScale, endScale, fracJourney);
-
-                startPosition = currentPlayerBrick.transform.position;
-                startScale = currentPlayerBrick.transform.localScale;
-                yield return null;
-            }
-
-            _house.ChangeQuantityBricks();
+            _house.BuildElement(inventory.GetItems(), _speed);
 
             yield return new WaitForSeconds(_delay);
+            //GameObject currentPlayerBrick = _inventory.GetItems();
+
+            //GameObject currentHouseBrick = _house.GetCell(_house.BuiltBricks);
+
+            //if(currentPlayerBrick == null  || currentHouseBrick == null)
+            //{
+            //    yield break;
+            //}
+
+            ////_inventory.RemoveItem(currentPlayerBrick);
+
+            //Vector3 startPosition = currentPlayerBrick.transform.position;
+            //Quaternion startRotation = currentPlayerBrick.transform.rotation;
+
+            //Vector3 endPosition = currentHouseBrick.transform.position;
+            //Quaternion endRotation = currentHouseBrick.transform.rotation;
+
+            //Vector3 startScale = currentPlayerBrick.transform.localScale;
+            //Vector3 endScale = currentHouseBrick.transform.localScale;
+
+            //float startTime = Time.time;
+            //float journeyLength = Vector3.Distance(startPosition, endPosition);
+
+            //while (Vector3.Distance(startPosition, endPosition) > 0)
+            //{
+            //    float distCovered = (Time.time - startTime) * _speed;
+            //    float fracJourney = distCovered / journeyLength;
+
+            //    currentPlayerBrick.transform.position = Vector3.Lerp(startPosition, endPosition, fracJourney);
+            //    //currentPlayerBrick.transform.position = Vector3.MoveTowards(startPosition, endPosition, _speed * Time.deltaTime);
+            //    currentPlayerBrick.transform.rotation = Quaternion.Lerp(startRotation, endRotation, fracJourney);
+
+            //    currentPlayerBrick.transform.localScale = Vector3.Lerp(startScale, endScale, fracJourney);
+
+            //    startPosition = currentPlayerBrick.transform.position;
+            //    startScale = currentPlayerBrick.transform.localScale;
+            //    yield return null;
+            //}
+
+            //_house.ChangeQuantityBricks();
+
         }
     }
 }

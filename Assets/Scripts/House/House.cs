@@ -6,22 +6,43 @@ using UnityEngine;
 public class House : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _cells = new List<GameObject>();
+    private Queue<Brick> _cellsBricks = new ();
 
     private int _builtBricks = 0;
 
     public int FullCountBricks => _cells.Count;
     public int BuiltBricks => _builtBricks;
+    public bool IsCanBuild => _cellsBricks.Count > 0;
 
     private void Start()
     {
-        foreach (Transform child in transform)
+        var bricks = transform.GetComponentsInChildren<Brick>();
+
+        for(int i = 0; i < bricks.Length; i++)
         {
-            if (child.GetComponent<Brick>())
-            {
-                _cells.Add(child.gameObject);
-                child.gameObject.SetActive(false);
-            }
+            _cellsBricks.Enqueue(bricks[i]);
         }
+        
+
+        //foreach (Transform child in transform)
+        //{
+        //    if (child.GetComponent<Brick>())
+        //    {
+        //        _cells.Add(child.gameObject);
+        //        child.gameObject.SetActive(false);
+        //    }
+        //}
+    }
+
+    public void BuildElement(Transform target, float speed)
+    {
+        if(target == null)
+        {
+            return;
+        }
+
+        var brick = _cellsBricks.Dequeue();
+        brick.PutBrick(target, speed);
     }
 
     public void ActivateCell(int number)
@@ -50,5 +71,27 @@ public class House : MonoBehaviour
             return brick;
         }
         return null;
+    }
+
+    [ContextMenu("Hide")]
+    public void HideBricks()
+    {
+        var bricks = transform.GetComponentsInChildren<Brick>();
+
+        for (int i = 0; i < bricks.Length; i++)
+        {
+            bricks[i].GetComponent<MeshRenderer>().enabled = false;
+        }
+    }
+
+    [ContextMenu("Show")]
+    public void ShowBricks()
+    {
+        var bricks = transform.GetComponentsInChildren<Brick>();
+
+        for (int i = 0; i < bricks.Length; i++)
+        {
+            bricks[i].GetComponent<MeshRenderer>().enabled = true;
+        }
     }
 }

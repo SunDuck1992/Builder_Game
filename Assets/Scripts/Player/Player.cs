@@ -8,4 +8,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private Inventory _inventory;
+
+    public Inventory Inventory => _inventory;
 }

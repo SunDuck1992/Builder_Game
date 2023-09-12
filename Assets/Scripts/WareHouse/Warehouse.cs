@@ -5,25 +5,32 @@ using UnityEngine;
 
 public class Warehouse : MonoBehaviour
 {
-    [SerializeField] private Inventory _inventory;
+    //[SerializeField] private Inventory _inventory;
     [SerializeField] private GameObject _brickPrefab;
     [SerializeField] private Transform _handPosition;
     [SerializeField] private float _delay;
 
     private Coroutine _coroutine;
-    private int NumberBrick => _inventory.CurrentCount;
+    private int NumberBrick => 10; /*_inventory.CurrentCount;*/
+
+    private ObjectPool _objectPool;
+
+    private void Start()
+    {
+        _objectPool = new ObjectPool(_brickPrefab);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Player>())
+        if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
-            _coroutine = StartCoroutine(PickUpBrick());
+            _coroutine = StartCoroutine(PickUpBrick(player.Inventory));
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.GetComponent<Player>())
+        if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
             if (_coroutine != null)
             {
@@ -32,14 +39,13 @@ public class Warehouse : MonoBehaviour
         }
     }
 
-    private IEnumerator PickUpBrick()
+    private IEnumerator PickUpBrick(Inventory inventory)
     {
-        while (NumberBrick < _inventory.MaxCount)
+        while (NumberBrick < inventory.MaxCount)
         {
             yield return new WaitForSeconds(_delay);
-
-            GameObject newBrick = Instantiate(_brickPrefab, _handPosition.position, _handPosition.rotation, transform);
-            _inventory.AddItem(newBrick);
+        
+            inventory.AddItem(_objectPool.Spawn());
         }
     }
 }
