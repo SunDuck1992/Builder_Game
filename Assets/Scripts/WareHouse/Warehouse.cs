@@ -11,7 +11,7 @@ public class Warehouse : MonoBehaviour
     [SerializeField] private float _delay;
 
     private Coroutine _coroutine;
-    private int NumberBrick => 10; /*_inventory.CurrentCount;*/
+    private int NumberBrick => 5; /*_inventory.CurrentCount;*/
 
     private ObjectPool _objectPool;
 
