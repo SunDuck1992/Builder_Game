@@ -6,8 +6,16 @@ public class CoordinateFromCamera : MonoBehaviour
 {
     [SerializeField] private Player _player;
 
-    void FixedUpdate()
+    private Vector3 _offset;
+
+    private void Start()
     {
-        transform.position = _player.transform.position;
+        _offset = _player.transform.position - transform.position;
+    }
+
+
+    void LateUpdate()
+    {
+        transform.position = _player.transform.position - _offset;
     }
 }

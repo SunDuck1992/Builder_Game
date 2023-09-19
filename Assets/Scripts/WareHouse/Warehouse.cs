@@ -10,12 +10,6 @@ public class Warehouse : MonoBehaviour
     [SerializeField] private float _delay;
 
     private Coroutine _coroutine;
-    private ObjectPool _objectPool;
-
-    private void Start()
-    {
-        _objectPool = new ObjectPool(_brickPrefab);
-    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -38,11 +32,13 @@ public class Warehouse : MonoBehaviour
 
     private IEnumerator PickUpBrick(Inventory inventory)
     {
-        while (inventory.CurrentCount < inventory.MaxCount)
+        ObjectPool pool = PoolService.Instance.GetPool(_brickPrefab);
+
+        while (inventory.CurrentCount < UpgradePlayer.Instance.MaxCount)
         {
             yield return new WaitForSeconds(_delay);
         
-            inventory.AddItem(_objectPool.Spawn());
+            inventory.AddItem(pool.Spawn());
         }
     }
 }

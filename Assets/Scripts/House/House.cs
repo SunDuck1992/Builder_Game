@@ -8,8 +8,11 @@ public class House : MonoBehaviour
     private Queue<Brick> _cellsBricks = new ();
 
     public bool IsCanBuild => _cellsBricks.Count > 0;
+    public int MaxCount { get; private set; }
+    
 
-    private void Start()
+
+    private void Awake()
     {
         var bricks = transform.GetComponentsInChildren<Brick>();
 
@@ -17,6 +20,8 @@ public class House : MonoBehaviour
         {
             _cellsBricks.Enqueue(bricks[i]);
         }
+
+        MaxCount = bricks.Length;
     }
 
     public void BuildElement(Transform target, float speed)

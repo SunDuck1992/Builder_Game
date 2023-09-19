@@ -23,6 +23,7 @@ public class ObjectPool
             @object.SetActive(true);
             return @object;
         }
+
         return MonoBehaviour.Instantiate(_prefab);
     }
 

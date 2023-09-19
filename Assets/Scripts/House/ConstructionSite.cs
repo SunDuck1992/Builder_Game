@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,6 +10,14 @@ public class ConstructionSite : MonoBehaviour
     [SerializeField] private float _speed;
 
     private Coroutine _coroutine;
+    private int _currentCount;
+
+    public event Action<int, int> OnBuild;
+
+    private void Start()
+    {
+        OnBuild?.Invoke(_currentCount, _house.MaxCount);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -35,6 +43,7 @@ public class ConstructionSite : MonoBehaviour
         while (inventory.CurrentCount > 0 & _house.IsCanBuild)
         {
             _house.BuildElement(inventory.GetItems(), _speed);
+            OnBuild?.Invoke(++_currentCount, _house.MaxCount);
 
             yield return new WaitForSeconds(_delay);
         }

@@ -8,11 +8,14 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    
+
     [SerializeField] private float _speed;
     [SerializeField] private float _rotationSpeed;
 
     private const string VerticalDirection = "Vertical";
     private const string HorizontalDirection = "Horizontal";
+    private const string SpeedMultyPlie = "speedMulti";
 
     private Rigidbody _rigidbody;
     private Animator _animator;
@@ -38,8 +41,9 @@ public class PlayerMovement : MonoBehaviour
         float zDirection = Input.GetAxisRaw(VerticalDirection);
 
         movement = new Vector3(xDirection, 0, zDirection);
+        _animator.SetFloat(SpeedMultyPlie, UpgradePlayer.Instance.MultiplieSpeed);
 
-        _rigidbody.MovePosition(_rigidbody.position + movement * _speed * Time.fixedDeltaTime);
+        _rigidbody.MovePosition(_rigidbody.position + movement * _speed * UpgradePlayer.Instance.MultiplieSpeed *Time.fixedDeltaTime);
 
         if (xDirection != 0 || zDirection != 0)
         {

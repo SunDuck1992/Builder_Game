@@ -5,8 +5,11 @@ using TMPro;
 
 public class FollowText : MonoBehaviour
 {
+    private const string Template = "{0} / {1}";
+
     [SerializeField] private Transform _target;
     [SerializeField] private TextMeshPro _infoText;
+    [SerializeField] private Inventory _inventory;
 
     public TextMeshPro InfoText => _infoText;
 
@@ -18,5 +21,20 @@ public class FollowText : MonoBehaviour
         }
 
         transform.position = _target.position;
+    }
+
+    private void OnEnable()
+    {
+        _inventory.OnAdd += ShowInfo;
+    }
+
+    private void OnDisable()
+    {
+        _inventory.OnAdd -= ShowInfo;
+    }
+
+    private void ShowInfo(int currentCount, int maxCount)
+    {
+        _infoText.text = string.Format(Template, currentCount, maxCount);
     }
 }
