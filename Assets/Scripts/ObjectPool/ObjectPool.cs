@@ -21,10 +21,13 @@ public class ObjectPool
         {
             GameObject @object = _pool.Last.Value;
             @object.SetActive(true);
+            _pool.RemoveLast();
             return @object;
         }
 
-        return MonoBehaviour.Instantiate(_prefab);
+        var result = MonoBehaviour.Instantiate(_prefab);
+        result.name = _prefab.name;
+        return result;
     }
 
     public void DeSpawn(GameObject prefab)

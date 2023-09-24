@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Scripting.APIUpdating;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
@@ -8,10 +10,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    
 
+    [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private float _speed;
     [SerializeField] private float _rotationSpeed;
+    [SerializeField] private Joystick _joystick;
 
     private const string VerticalDirection = "Vertical";
     private const string HorizontalDirection = "Horizontal";
@@ -21,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator _animator;
     private HashPlayerAnimations _hashPlayer;
     private Vector3 movement;
+   
 
     private void Start()
     {
@@ -40,11 +44,16 @@ public class PlayerMovement : MonoBehaviour
         float xDirection = Input.GetAxisRaw(HorizontalDirection);
         float zDirection = Input.GetAxisRaw(VerticalDirection);
 
+        //xDirection = _joystick.Horizontal;
+        //zDirection = _joystick.Vertical;
+
         movement = new Vector3(xDirection, 0, zDirection);
         _animator.SetFloat(SpeedMultyPlie, UpgradePlayer.Instance.MultiplieSpeed);
 
-        _rigidbody.MovePosition(_rigidbody.position + movement * _speed * UpgradePlayer.Instance.MultiplieSpeed *Time.fixedDeltaTime);
+        //_rigidbody.MovePosition(_rigidbody.position + movement * _speed * UpgradePlayer.Instance.MultiplieSpeed * Time.fixedDeltaTime);
 
+        _agent.speed = _speed * UpgradePlayer.Instance.MultiplieSpeed;
+        _agent.velocity = movement.normalized * _agent.speed;
         if (xDirection != 0 || zDirection != 0)
         {
             _animator.SetBool(_hashPlayer.Walk, true);
@@ -60,7 +69,9 @@ public class PlayerMovement : MonoBehaviour
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement);
-            _rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, toRotation, _rotationSpeed));
+            //_rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, toRotation, _rotationSpeed));
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, _rotationSpeed);
+            //transform.forward = (transform.position +  movement) - transform.position;
         }
     }
 }

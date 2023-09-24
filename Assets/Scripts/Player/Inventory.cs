@@ -17,13 +17,21 @@ public class Inventory : MonoBehaviour
 
     public event Action<int, int> OnAdd;
 
+    public Materials Material { get; private set; }
+
     private void Start()
     {
         UpdateCounter();
     }
 
-    public void AddItem(GameObject item)
+    public void AddItem(GameObject item, Materials material)
     {
+
+        if(Material == Materials.None)
+        {
+            Material = material;
+        }
+
         if (_itemsList.Count < UpgradePlayer.Instance.MaxCount)
         {
             SortList(item);
@@ -31,6 +39,9 @@ public class Inventory : MonoBehaviour
 
             UpdateCounter();
         }
+
+        if (Material != material)
+            return;
     }
 
     private void SortList(GameObject item)
@@ -56,9 +67,26 @@ public class Inventory : MonoBehaviour
         _itemsList.RemoveLast();
         item.transform.SetParent(null);
 
+        if(_itemsList.Count <= 0)
+        {
+            Material = Materials.None;
+        }
+
         UpdateCounter();
 
         return item.transform;
+    }
+
+    public void ThrowOutItem()
+    {
+        GameObject item = _itemsList.Last.Value;
+        _itemsList.RemoveLast();
+
+        PoolService.Instance.GetPool(item).DeSpawn(item);
+
+        Material = Materials.None;
+
+        UpdateCounter();
     }
 
     private void UpdateCounter()

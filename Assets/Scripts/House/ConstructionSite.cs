@@ -10,13 +10,12 @@ public class ConstructionSite : MonoBehaviour
     [SerializeField] private float _speed;
 
     private Coroutine _coroutine;
-    private int _currentCount;
 
     public event Action<int, int> OnBuild;
 
     private void Start()
     {
-        OnBuild?.Invoke(_currentCount, _house.MaxCount);
+        OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -40,10 +39,12 @@ public class ConstructionSite : MonoBehaviour
 
     private IEnumerator BuildHouse(Inventory inventory)
     {
-        while (inventory.CurrentCount > 0 & _house.IsCanBuild)
+        var material = inventory.Material;
+
+        while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.CheckMaterial(material))
         {
-            _house.BuildElement(inventory.GetItems(), _speed);
-            OnBuild?.Invoke(++_currentCount, _house.MaxCount);
+            _house.BuildElement(inventory.GetItems(), _speed, material);
+            OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
 
             yield return new WaitForSeconds(_delay);
         }

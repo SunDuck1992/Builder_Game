@@ -6,8 +6,8 @@ using UnityEngine;
 public class Warehouse : MonoBehaviour
 {
     [SerializeField] private GameObject _brickPrefab;
-    [SerializeField] private Transform _handPosition;
     [SerializeField] private float _delay;
+    [SerializeField] private Materials _material;
 
     private Coroutine _coroutine;
 
@@ -38,7 +38,7 @@ public class Warehouse : MonoBehaviour
         {
             yield return new WaitForSeconds(_delay);
         
-            inventory.AddItem(pool.Spawn());
+            inventory.AddItem(pool.Spawn(), _material);
         }
     }
 }
