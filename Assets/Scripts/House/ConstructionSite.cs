@@ -11,11 +11,13 @@ public class ConstructionSite : MonoBehaviour
 
     private Coroutine _coroutine;
 
-    public event Action<int, int> OnBuild;
+    public event Action<Materials,int, int> OnBuild;
+    public event Action OnComplete;
+    public House House => _house;
 
     private void Start()
     {
-        OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
+   
     }
 
     private void OnTriggerEnter(Collider other)
@@ -41,10 +43,10 @@ public class ConstructionSite : MonoBehaviour
     {
         var material = inventory.Material;
 
-        while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.CheckMaterial(material))
+       while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.CheckMaterial(material))
         {
             _house.BuildElement(inventory.GetItems(), _speed, material);
-            OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
+            //OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
 
             yield return new WaitForSeconds(_delay);
         }

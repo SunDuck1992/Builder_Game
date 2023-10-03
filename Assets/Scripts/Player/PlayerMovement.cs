@@ -5,8 +5,6 @@ using UnityEngine.AI;
 using UnityEngine.Scripting.APIUpdating;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(HashPlayerAnimations))]
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -22,15 +20,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private Animator _animator;
-    private HashPlayerAnimations _hashPlayer;
     private Vector3 movement;
    
 
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _animator = GetComponent<Animator>();
-        _hashPlayer = GetComponent<HashPlayerAnimations>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void FixedUpdate()
@@ -56,11 +52,11 @@ public class PlayerMovement : MonoBehaviour
         _agent.velocity = movement.normalized * _agent.speed;
         if (xDirection != 0 || zDirection != 0)
         {
-            _animator.SetBool(_hashPlayer.Walk, true);
+            _animator.SetBool(HashPlayerAnimations.Walk, true);
         }
         else
         {
-            _animator.SetBool(_hashPlayer.Walk, false);
+            _animator.SetBool(HashPlayerAnimations.Walk, false);
         }
     }
 

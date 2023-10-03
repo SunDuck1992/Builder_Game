@@ -6,7 +6,8 @@ public enum Materials
 {
     None = 0,
     Brick,
-    Board
+    Board,
+    Roof
 }
 
 public class BuildMaterial : MonoBehaviour
@@ -34,21 +35,22 @@ public class BuildMaterial : MonoBehaviour
     {
         bool flag = true;
         float multiplie = 2f;
+        Vector3 scale = target.localScale;
 
         while (flag)
         {
-            target.position = Vector3.Lerp(target.position, transform.position, speed * Time.deltaTime);
-            target.localScale = Vector3.Lerp(target.localScale, transform.localScale, speed * Time.deltaTime);
-            target.rotation = Quaternion.Lerp(target.rotation, transform.rotation, speed * multiplie * Time.deltaTime);
+            target.position = Vector3.Lerp(target.position, transform.parent.position, speed * Time.deltaTime);
+            target.localScale = Vector3.Lerp(target.localScale, transform.parent.localScale, speed * Time.deltaTime);
+            target.rotation = Quaternion.Lerp(target.rotation, transform.parent.rotation, speed * multiplie * Time.deltaTime);
 
-            float distance = Vector3.Distance(target.position, transform.position);
-            float rotation = Quaternion.Angle(target.rotation, transform.rotation);
+            float distance = Vector3.Distance(target.position, transform.parent.position);
+            float rotation = Quaternion.Angle(target.rotation, transform.parent.rotation);
 
             if(distance <= 0.1f & rotation < 1f)
             {
-                target.position = transform.position;
-                target.localScale = transform.localScale;
-                target.rotation = transform.rotation;
+                target.position = transform.parent.position;
+                target.localScale = transform.parent.localScale;
+                target.rotation = transform.parent.rotation;
 
                 flag = false;
             }
@@ -57,6 +59,7 @@ public class BuildMaterial : MonoBehaviour
         }
 
         PoolService.Instance.GetPool(target.gameObject).DeSpawn(target.gameObject);
+        target.localScale = scale;
         GetComponent<MeshRenderer>().enabled = true;
     }
 }

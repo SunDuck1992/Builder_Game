@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HashPlayerAnimations : MonoBehaviour
+public static class HashPlayerAnimations
 {
-    public readonly int Idle = Animator.StringToHash("isIdle");
-    public readonly int Walk = Animator.StringToHash("isWalk");
+    public static int Idle = Animator.StringToHash("isIdle");
+    public static int Walk = Animator.StringToHash("isWalk");
 }

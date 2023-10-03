@@ -58,7 +58,7 @@ public class Inventory : MonoBehaviour
 
         item.transform.SetParent(_handPosition);
         item.transform.localRotation = Quaternion.identity;
-        item.transform.localScale = Vector3.one * 36;
+        //item.transform.localScale = Vector3.one * 36;
     }
 
     public Transform GetItems()

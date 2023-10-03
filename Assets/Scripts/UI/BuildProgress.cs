@@ -7,19 +7,22 @@ public class BuildProgress : MonoBehaviour
 {
     private const string Template = "{0} / {1}";
     [SerializeField] private TextMeshProUGUI _progressText;
-    [SerializeField] private ConstructionSite _constructionSite;
+    //[SerializeField] private ConstructionSite _constructionSite;
+    [SerializeField] private Materials _materials;
 
-    private void Start()
-    {
-        _constructionSite.OnBuild += ShowProgress;
-    }
+    public Materials Materials => _materials;
 
-    private void OnDisable()
-    {
-        _constructionSite.OnBuild -= ShowProgress;
-    }
+    //private void Awake()
+    //{
+    //    _constructionSite.OnBuild += ShowProgress;
+    //}
 
-    private void ShowProgress(int currentCount, int maxCount)
+    //private void OnDisable()
+    //{
+    //    _constructionSite.OnBuild -= ShowProgress;
+    //}
+
+    public void ShowProgress(int currentCount, int maxCount)
     {
         _progressText.text = string.Format(Template, currentCount, maxCount);
     }

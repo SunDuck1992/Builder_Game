@@ -4,7 +4,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(Inventory))]
 [RequireComponent(typeof(PlayerMovement))]
-[RequireComponent(typeof(HashPlayerAnimations))]
 
 public class Player : MonoBehaviour
 {
