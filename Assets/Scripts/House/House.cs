@@ -2,23 +2,88 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public class StageInfo
+{
+    private Dictionary<Materials, MaterialInfo> _infoes = new();
+    private List<Materials> _stageMaterials = new();
+
+    public IReadOnlyList<Materials> StageMaterials => _stageMaterials;
+
+    public(int max, int current) GetCountInfo(Materials material)
+    {
+        var materialInfo = _infoes[material];
+        return (materialInfo.maxCount, materialInfo.currentCount);
+    }
+
+    public void AddMaterial(BuildMaterial buildMaterial, bool isLoad)
+    {
+        if (!_infoes.TryGetValue(buildMaterial.Materials, out var info))
+        {
+            info = new();
+            _infoes.Add(buildMaterial.Materials, info);
+        }
+
+        if (isLoad)
+        {
+            buildMaterial.GetComponent<MeshRenderer>().enabled = true;
+            info.currentCount++;
+        }
+        else
+        {
+            if (!_stageMaterials.Contains(buildMaterial.Materials))
+            {
+                _stageMaterials.Add(buildMaterial.Materials);
+            }
+
+            info.materialCells.Enqueue(buildMaterial);
+        }
+
+        info.maxCount++;
+    }
+
+    public BuildMaterial GetMaterial(Materials material)
+    {
+        if (_infoes.TryGetValue(material, out var info))
+        {
+            var element = info.materialCells.Dequeue();
+            info.currentCount++;
+
+            if (info.materialCells.Count <= 0)
+            {
+                _stageMaterials.Remove(material);
+            }
+
+            return element;
+        }
+
+        return null;
+    }
+
+    private class MaterialInfo
+    {
+        public Queue<BuildMaterial> materialCells = new();
+        public int currentCount;
+        public int maxCount;
+    }
+}
+
 public class House : MonoBehaviour
 {
     //private Dictionary<Materials, Queue<BuildMaterial>> _cellMaterials = new();
-    private List<Dictionary<Materials, Queue<BuildMaterial>>> _stageCells = new();
-    private Dictionary<int, Dictionary<Materials,int>> _stageCount = new();
-    private Dictionary<int, Dictionary<Materials, int>> _stageCurrentCount = new();
-
+    //private List<Dictionary<Materials, Queue<BuildMaterial>>> _stageCells = new();
+    //private Dictionary<int, Dictionary<Materials, int>> _stageCount = new();
+    //private Dictionary<int, Dictionary<Materials, int>> _stageCurrentCount = new();
+    private List<StageInfo> _stages = new List<StageInfo>();
     //private Queue<BuildMaterial> _cellsBricks = new ();
     [SerializeField] private Transform _root;
 
     private HouseProgress _saveData;
 
-    public bool IsCanBuild => CurrentStage < _stageCells.Count;
+    public bool IsCanBuild => CurrentStage < _stages.Count;
     //public int MaxCount => _stageCount[CurrentStage];
-    public int CurrentCount { get; private set; }
+    //public int CurrentCount { get; private set; }
     public int CurrentStage { get; private set; }
-    public IReadOnlyList<Materials> StageMaterials => _stageCells[CurrentStage].Keys.ToArray();
+    public IReadOnlyList<Materials> StageMaterials => _stages[CurrentStage].StageMaterials;
 
 
 
@@ -33,6 +98,7 @@ public class House : MonoBehaviour
         else
         {
             _saveData = JsonUtility.FromJson<HouseProgress>(json);
+            CurrentStage = _saveData.currentStage;
         }
 
         for (int i = 0; i < _root.childCount; i++)
@@ -40,50 +106,33 @@ public class House : MonoBehaviour
             var child = _root.GetChild(i);
 
             var materials = child.GetComponentsInChildren<BuildMaterial>();
-            Dictionary<Materials, Queue<BuildMaterial>> stage = new();
 
-            for (int j = 0; j < materials.Length; j++)
+            if (materials.Length > 0)
             {
-                if(!_stageCount.TryGetValue(i, out var materialsCount))
+                var stageInfo = new StageInfo();
+
+                for (int j = 0; j < materials.Length; j++)
                 {
-                    materialsCount = new();
-                    _stageCount.Add(i, materialsCount);
+                    stageInfo.AddMaterial(materials[j], _saveData.ContainTo(materials[j]));
                 }
 
-                materialsCount[materials[j].Materials]++;
-
-                if (!_saveData.name.Contains(materials[j].transform.parent.name))
-                {
-                    if (!stage.TryGetValue(materials[j].Materials, out var queue))
-                    {
-                        queue = new Queue<BuildMaterial>();
-                        stage.Add(materials[j].Materials, queue);
-                    }
-
-                    queue.Enqueue(materials[j]);
-                }
-                else
-                {
-                    materials[j].GetComponent<MeshRenderer>().enabled = true;
-                    CurrentCount++;
-                }
-
-                
-            }
-            _stageCells.Add(stage);
-
-            if (stage.Count <= 0)
-            {
-                CurrentStage++;
-                CurrentCount = 0;
+                _stages.Add(stageInfo);
             }
         }
     }
-    public bool CheckMaterial(Materials material)
+
+    public(int max, int current) GetCountInfo(Materials material)
     {
-        return _stageCells[CurrentStage].ContainsKey(material);
+        return _stages[CurrentStage].GetCountInfo(material);
     }
 
+    public void NextStage()
+    {
+        CurrentStage++;
+        _saveData.currentStage = CurrentStage;
+        string json = JsonUtility.ToJson(_saveData);
+        PlayerPrefs.SetString("house", json);
+    }
     public void BuildElement(Transform target, float speed, Materials materials)
     {
         if (target == null)
@@ -91,33 +140,42 @@ public class House : MonoBehaviour
             return;
         }
 
-        if (_stageCells[CurrentStage].TryGetValue(materials, out var queue))
-        {
-            var element = queue.Dequeue();
-            element.PutBrick(target, speed);
-            CurrentCount++;
+        var stageInfo = _stages[CurrentStage];
+        var element = stageInfo.GetMaterial(materials);
+        element?.PutBrick(target, speed);
 
-            _saveData.name.Add(element.transform.parent.name);
-            string json = JsonUtility.ToJson(_saveData);
-            PlayerPrefs.SetString("house", json);
+        _saveData.Save(element);
+        string json = JsonUtility.ToJson(_saveData);
+        PlayerPrefs.SetString("house", json);
 
-            if (queue.Count <= 0)
-            {
-                _stageCells[CurrentStage].Remove(materials);
-            }
+        //if (_stages[CurrentStage].TryGetValue(materials, out var queue))
+        //{
+        //    var element = queue.Dequeue();
 
-            if (_stageCells[CurrentStage].Count <= 0)
-            {
-                CurrentStage++;
-                CurrentCount = 0;
-            }
-        }
+
+        //    CurrentCount++;
+
+        //    _saveData.name.Add(element.transform.parent.name);
+        //    string json = JsonUtility.ToJson(_saveData);
+        //    PlayerPrefs.SetString("house", json);
+
+        //    if (queue.Count <= 0)
+        //    {
+        //        _stageCells[CurrentStage].Remove(materials);
+        //    }
+
+        //    if (_stageCells[CurrentStage].Count <= 0)
+        //    {
+        //        CurrentStage++;
+        //        CurrentCount = 0;
+        //    }
+        //}
     }
 
-    public int GetMaterialCount(Materials material)
-    {
-        return _stageCount[CurrentStage][material];
-    }
+    //public int GetMaterialCount(Materials material)
+    //{
+    //    return _stageCount[CurrentStage][material];
+    //}
 
     //public void BuildElement(Transform target, float speed)
     //{

@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] private Transform _handPosition;
     [SerializeField] private FollowText _text;
+    [SerializeField] private FXResourses _fxData;
 
     private LinkedList<GameObject> _itemsList = new();
     private readonly float _distanceBetween = 0.25f;
@@ -37,6 +38,10 @@ public class Inventory : MonoBehaviour
             SortList(item);
             _itemsList.AddLast(item);
 
+            var fx = PoolService.Instance.FxPool.Spawn(FXType.Build);
+            fx.transform.position = item.transform.position;
+            StartCoroutine(FxPlay(fx.GetComponent<ParticleSystem>()));
+
             UpdateCounter();
         }
 
@@ -58,6 +63,8 @@ public class Inventory : MonoBehaviour
 
         item.transform.SetParent(_handPosition);
         item.transform.localRotation = Quaternion.identity;
+
+
         //item.transform.localScale = Vector3.one * 36;
     }
 
@@ -102,5 +109,19 @@ public class Inventory : MonoBehaviour
     private void OnDisable()
     {
         UpgradePlayer.Instance.OnUpgrade -= UpdateCounter;
+    }
+
+    private IEnumerator FxPlay(ParticleSystem particle)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!particle.isPlaying)
+            {
+                PoolService.Instance.FxPool.Despawn(particle);
+                break;
+            }
+        }
     }
 }

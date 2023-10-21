@@ -13,6 +13,7 @@ public enum Materials
 public class BuildMaterial : MonoBehaviour
 {
     [SerializeField] private Materials _materials;
+    [SerializeField] private int _reward;
 
     public Materials Materials => _materials;
 
@@ -29,6 +30,11 @@ public class BuildMaterial : MonoBehaviour
     public void PutBrick(Transform target, float speed)
     {
         StartCoroutine(PutToPosition(target, speed));
+    }
+
+    public void PayReward()
+    {
+        UpgradePlayer.Instance.ChangeMoney(_reward * UpgradePlayer.Instance.MultiplieMoney);
     }
 
     private IEnumerator PutToPosition(Transform target, float speed)
@@ -61,5 +67,6 @@ public class BuildMaterial : MonoBehaviour
         PoolService.Instance.GetPool(target.gameObject).DeSpawn(target.gameObject);
         target.localScale = scale;
         GetComponent<MeshRenderer>().enabled = true;
+        PayReward();
     }
 }

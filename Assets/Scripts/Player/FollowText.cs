@@ -7,20 +7,22 @@ public class FollowText : MonoBehaviour
 {
     private const string Template = "{0} / {1}";
 
+    [SerializeField] private Transform _pivot;
     [SerializeField] private Transform _target;
-    [SerializeField] private TextMeshPro _infoText;
+    [SerializeField] private TextMeshProUGUI _infoText;
     [SerializeField] private Inventory _inventory;
 
-    public TextMeshPro InfoText => _infoText;
+    public TextMeshProUGUI InfoText => _infoText;
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if(_target == null)
         {
             return;
         }
 
-        transform.position = _target.position;
+        //transform.position = _target.position;
+        _target.position = Camera.main.WorldToScreenPoint(_pivot.position);
     }
 
     private void OnEnable()

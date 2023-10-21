@@ -2,6 +2,8 @@ using System.Collections;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
+using UnityEngine.InputSystem.Interactions;
 
 public class ConstructionSite : MonoBehaviour
 {
@@ -43,10 +45,16 @@ public class ConstructionSite : MonoBehaviour
     {
         var material = inventory.Material;
 
-       while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.CheckMaterial(material))
+       while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.StageMaterials.Contains(material))
         {
             _house.BuildElement(inventory.GetItems(), _speed, material);
-            //OnBuild?.Invoke(_house.CurrentCount, _house.MaxCount);
+            var info = _house.GetCountInfo(material);
+            OnBuild?.Invoke(material ,info.current, info.max);
+
+            if(_house.StageMaterials.Count <= 0)
+            {
+                _house.NextStage();
+            }
 
             yield return new WaitForSeconds(_delay);
         }

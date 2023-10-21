@@ -9,7 +9,6 @@ public class PoolService
 {
     private static PoolService _instance;
     private Dictionary<string, ObjectPool> _pools; 
-
     private PoolService()
     {
         _pools = new Dictionary<string, ObjectPool>();
@@ -26,6 +25,8 @@ public class PoolService
             return _instance;
         }
     }
+
+    public FXPool FxPool { get; set; }
 
     public void AddPool(GameObject prefab)
     {

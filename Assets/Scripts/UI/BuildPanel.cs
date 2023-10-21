@@ -8,15 +8,24 @@ public class BuildPanel : MonoBehaviour
 {
     [SerializeField] private List<BuildProgress> _buildProgresses;
     [SerializeField] private TextMeshProUGUI _stageText;
+    [SerializeField] private BuildPoint _buildPoint;
 
-    private ConstructionSite _construction;
+    //private ConstructionSite _construction;
 
+    private void Awake()
+    {
+        _buildPoint.OnBuild += Setup;
+    }
 
+    private void OnDestroy()
+    {
+        _buildPoint.OnBuild -= Setup;
+    }
     public void Setup(ConstructionSite constructionSite)
     {
         constructionSite.OnBuild += ShowProgress;
         constructionSite.OnComplete += OnCompleteStage;
-        _construction = constructionSite;
+        //_construction = constructionSite;
         ShowMaterial();
 
     }
@@ -33,7 +42,7 @@ public class BuildPanel : MonoBehaviour
 
     private void OnCompleteStage()
     {
-        _stageText.text = _construction.House.CurrentStage.ToString();
+        _stageText.text = _buildPoint.Construction.House.CurrentStage.ToString();
         ShowMaterial();
     }
 
@@ -41,10 +50,11 @@ public class BuildPanel : MonoBehaviour
     {
         _buildProgresses.ForEach(x =>
         {
-            if (_construction.House.StageMaterials.Contains(x.Materials))
+            if (_buildPoint.Construction.House.StageMaterials.Contains(x.Materials))
             {
+                var countInfo = _buildPoint.Construction.House.GetCountInfo(x.Materials);
                 x.gameObject.SetActive(true);
-                x.ShowProgress(0, _construction.House.GetMaterialCount(x.Materials));
+                x.ShowProgress(countInfo.current, countInfo.max);
             }
             else
             {

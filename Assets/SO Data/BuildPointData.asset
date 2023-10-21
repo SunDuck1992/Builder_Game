@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: BuildPointData
   m_EditorClassIdentifier: 
   _housePrefabs:
-  - {fileID: 7548317029254763514, guid: 097c3e2fcd0308245a33cebabcb32275, type: 3}
+  - {fileID: 4629416473948500562, guid: 2a4693730c1b16547b546cc70c4e5ac9, type: 3}
   - {fileID: 5169930611411812269, guid: c678e4808be0b4442ab13e2402a95687, type: 3}
+  - {fileID: 8447038317900500083, guid: 1daed4fcb9038a74a8f42a2a9a825dca, type: 3}

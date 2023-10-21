@@ -99,6 +99,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Brick
       objectReference: {fileID: 0}
+    - target: {fileID: 4983732676930119054, guid: 8f49e555ecfc8754fa42c8028d1e501e, type: 3}
+      propertyPath: _reward
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f49e555ecfc8754fa42c8028d1e501e, type: 3}
 --- !u!4 &3590736551080496086 stripped
