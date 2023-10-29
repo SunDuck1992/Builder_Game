@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.InputSystem;
 
 public class ConstructionSite : MonoBehaviour
 {
@@ -14,13 +15,10 @@ public class ConstructionSite : MonoBehaviour
     private Coroutine _coroutine;
 
     public event Action<Materials,int, int> OnBuild;
-    public event Action OnComplete;
+    public event Action OnCompleteStage;
+    public event Action<int, int> OnHouseBuild;
+    public event Action OnCompleteBuild;
     public House House => _house;
-
-    private void Start()
-    {
-   
-    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -44,19 +42,41 @@ public class ConstructionSite : MonoBehaviour
     private IEnumerator BuildHouse(Inventory inventory)
     {
         var material = inventory.Material;
-
-       while (inventory.CurrentCount > 0 & _house.IsCanBuild & _house.StageMaterials.Contains(material))
+        
+        while (inventory.CurrentCount > 0 & _house.IsCanBuild && _house.StageMaterials.Contains(material))
         {
             _house.BuildElement(inventory.GetItems(), _speed, material);
             var info = _house.GetCountInfo(material);
             OnBuild?.Invoke(material ,info.current, info.max);
+            OnHouseBuild?.Invoke(_house.CurrnetElementsCount, _house.MaxElementsCount);
 
-            if(_house.StageMaterials.Count <= 0)
+            if (_house.CheckIsComplete(() => OnCompleteBuild?.Invoke()))
             {
-                _house.NextStage();
+                var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.BuildComplete);
+                StartCoroutine(VolumeFxPlay(volumeFX));
+                //OnCompleteBuild?.Invoke();
             }
 
+            if (_house.StageMaterials.Count <= 0)
+            {
+                _house.NextStage();
+                OnCompleteStage?.Invoke();
+            }
             yield return new WaitForSeconds(_delay);
+        }
+    }
+
+    private IEnumerator VolumeFxPlay(AudioSource audioSource)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!audioSource.isPlaying)
+            {
+                PoolService.Instance.VolumeFXPool.Despawn(audioSource);
+                break;
+            }
         }
     }
 }

@@ -22,11 +22,13 @@ public class UpgradeButton : MonoBehaviour
 
     private int _cost;
 
-
     private void Start()
     {
         _button.onClick.AddListener(() =>
         {
+            var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.PurchaseImprovment);
+            StartCoroutine(VolumeFxPlay(volumeFX));
+
             UpgradePlayer.Instance.ApplayUpgrade(_upgrade, _cost);
             ShowCost();
         });
@@ -44,15 +46,10 @@ public class UpgradeButton : MonoBehaviour
         switch (_upgrade)
         {
             case Upgrade.Count:
-                //_cost = ChangeCost(UpgradePlayer.Instance.UpgradeCountLevel);
-                //_text.text = _cost.ToString();
-                //ChangeCost(UpgradePlayer.Instance.UpgradeCountLevel);
                 _text.text = ChangeCost(UpgradePlayer.Instance.UpgradeCountLevel).ToString();
                 break;
             case Upgrade.Speed:
-                //_cost = ChangeCost(UpgradePlayer.Instance.UpgradeSpeedLevel);
                 _text.text = ChangeCost(UpgradePlayer.Instance.UpgradeSpeedLevel).ToString();
-                //ChangeCost(UpgradePlayer.Instance.UpgradeSpeedLevel);
                 break;
             case Upgrade.Cost:
                 _text.text = ChangeCost(UpgradePlayer.Instance.UpgradeMoneyLevel).ToString();
@@ -63,9 +60,21 @@ public class UpgradeButton : MonoBehaviour
 
     private int ChangeCost(int upgradelevel)
     {
-        //_cost = upgradelevel;
-        //_text.text = (_baseCost + upgradelevel * _stepCost).ToString();
         _cost = _baseCost + upgradelevel * _stepCost;
         return _cost;
+    }
+
+    private IEnumerator VolumeFxPlay(AudioSource audioSource)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!audioSource.isPlaying)
+            {
+                PoolService.Instance.VolumeFXPool.Despawn(audioSource);
+                break;
+            }
+        }
     }
 }

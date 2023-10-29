@@ -15,3 +15,5 @@ MonoBehaviour:
   _datas:
   - type: 1
     particleSystem: {fileID: 19826678, guid: 567c292cfc97c4e488f1716ec679c9bd, type: 3}
+  - type: 2
+    particleSystem: {fileID: 19826678, guid: 567c292cfc97c4e488f1716ec679c9bd, type: 3}

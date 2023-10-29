@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4a2a5246db8cdb4a9ed9568a76e87d1, type: 3}
+  m_Name: VolumeFXResources
+  m_EditorClassIdentifier: 
+  _datas:
+  - type: 1
+    clip: {fileID: 8300000, guid: 65cfaeb7c6e0a1b42ba8a82ba0d438c9, type: 3}
+  - type: 2
+    clip: {fileID: 8300000, guid: 6ca0ffd9a709d324e955ff2d30a24fca, type: 3}
+  - type: 3
+    clip: {fileID: 8300000, guid: d07cfeba771f1c3468412b6d1e6230b7, type: 3}
+  - type: 4
+    clip: {fileID: 8300000, guid: 45e52101819d5254d8b072c178bd0a03, type: 3}
+  - type: 5
+    clip: {fileID: 8300000, guid: 1ce0dc6cfb0673f4fb1a1fb3d28a3fc4, type: 3}
+  _audioSourcePrefab: {fileID: 6320426592426308661, guid: 6014bc7c7a1d74b46bf8a6be9a71ae11, type: 3}

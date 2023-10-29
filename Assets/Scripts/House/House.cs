@@ -1,91 +1,25 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
-
-public class StageInfo
-{
-    private Dictionary<Materials, MaterialInfo> _infoes = new();
-    private List<Materials> _stageMaterials = new();
-
-    public IReadOnlyList<Materials> StageMaterials => _stageMaterials;
-
-    public(int max, int current) GetCountInfo(Materials material)
-    {
-        var materialInfo = _infoes[material];
-        return (materialInfo.maxCount, materialInfo.currentCount);
-    }
-
-    public void AddMaterial(BuildMaterial buildMaterial, bool isLoad)
-    {
-        if (!_infoes.TryGetValue(buildMaterial.Materials, out var info))
-        {
-            info = new();
-            _infoes.Add(buildMaterial.Materials, info);
-        }
-
-        if (isLoad)
-        {
-            buildMaterial.GetComponent<MeshRenderer>().enabled = true;
-            info.currentCount++;
-        }
-        else
-        {
-            if (!_stageMaterials.Contains(buildMaterial.Materials))
-            {
-                _stageMaterials.Add(buildMaterial.Materials);
-            }
-
-            info.materialCells.Enqueue(buildMaterial);
-        }
-
-        info.maxCount++;
-    }
-
-    public BuildMaterial GetMaterial(Materials material)
-    {
-        if (_infoes.TryGetValue(material, out var info))
-        {
-            var element = info.materialCells.Dequeue();
-            info.currentCount++;
-
-            if (info.materialCells.Count <= 0)
-            {
-                _stageMaterials.Remove(material);
-            }
-
-            return element;
-        }
-
-        return null;
-    }
-
-    private class MaterialInfo
-    {
-        public Queue<BuildMaterial> materialCells = new();
-        public int currentCount;
-        public int maxCount;
-    }
-}
 
 public class House : MonoBehaviour
 {
-    //private Dictionary<Materials, Queue<BuildMaterial>> _cellMaterials = new();
-    //private List<Dictionary<Materials, Queue<BuildMaterial>>> _stageCells = new();
-    //private Dictionary<int, Dictionary<Materials, int>> _stageCount = new();
-    //private Dictionary<int, Dictionary<Materials, int>> _stageCurrentCount = new();
-    private List<StageInfo> _stages = new List<StageInfo>();
-    //private Queue<BuildMaterial> _cellsBricks = new ();
     [SerializeField] private Transform _root;
+    [SerializeField] private ConstructionSite _constructionSite;
+    [SerializeField] private List<StageEventObjects> _stageEventObjects;
 
+    private List<StageInfo> _stages = new List<StageInfo>();
     private HouseProgress _saveData;
 
     public bool IsCanBuild => CurrentStage < _stages.Count;
-    //public int MaxCount => _stageCount[CurrentStage];
-    //public int CurrentCount { get; private set; }
     public int CurrentStage { get; private set; }
+    public int CurrnetElementsCount { get; private set; }
+    public int MaxElementsCount { get; private set; }
+    public ConstructionSite ConstructionSite => _constructionSite;
     public IReadOnlyList<Materials> StageMaterials => _stages[CurrentStage].StageMaterials;
-
-
 
     private void Awake()
     {
@@ -101,6 +35,11 @@ public class House : MonoBehaviour
             CurrentStage = _saveData.currentStage;
         }
 
+        for (int i = CurrentStage; i > 0; i--)
+        {
+            ActivateEventObjects(i, true);
+        }
+
         for (int i = 0; i < _root.childCount; i++)
         {
             var child = _root.GetChild(i);
@@ -114,14 +53,21 @@ public class House : MonoBehaviour
                 for (int j = 0; j < materials.Length; j++)
                 {
                     stageInfo.AddMaterial(materials[j], _saveData.ContainTo(materials[j]));
+
+                    if (_saveData.ContainTo(materials[j]))
+                    {
+                        CurrnetElementsCount++;
+                    }
                 }
 
                 _stages.Add(stageInfo);
             }
+
+            MaxElementsCount += materials.Length;
         }
     }
 
-    public(int max, int current) GetCountInfo(Materials material)
+    public (int max, int current) GetCountInfo(Materials material)
     {
         return _stages[CurrentStage].GetCountInfo(material);
     }
@@ -132,7 +78,29 @@ public class House : MonoBehaviour
         _saveData.currentStage = CurrentStage;
         string json = JsonUtility.ToJson(_saveData);
         PlayerPrefs.SetString("house", json);
+
+        ActivateEventObjects(CurrentStage, false);
     }
+
+    private void ActivateEventObjects(int stage, bool isLoad)
+    {
+        var data = _stageEventObjects.Find(x => x.stageNumber == stage);
+
+        if (data != null)
+        {
+            if (!isLoad)
+            {
+                // fx
+                data.eventObject.SetActive(true);
+                data.effect.Play();
+                //Debug.Log("noLoad");
+            }
+
+            data.eventObject.SetActive(true);
+            //Debug.Log("Load");
+        }
+    }
+
     public void BuildElement(Transform target, float speed, Materials materials)
     {
         if (target == null)
@@ -144,49 +112,49 @@ public class House : MonoBehaviour
         var element = stageInfo.GetMaterial(materials);
         element?.PutBrick(target, speed);
 
+        var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.InstallBlock);
+        StartCoroutine(VolumeFxPlay(volumeFX));
+
         _saveData.Save(element);
         string json = JsonUtility.ToJson(_saveData);
         PlayerPrefs.SetString("house", json);
-
-        //if (_stages[CurrentStage].TryGetValue(materials, out var queue))
-        //{
-        //    var element = queue.Dequeue();
-
-
-        //    CurrentCount++;
-
-        //    _saveData.name.Add(element.transform.parent.name);
-        //    string json = JsonUtility.ToJson(_saveData);
-        //    PlayerPrefs.SetString("house", json);
-
-        //    if (queue.Count <= 0)
-        //    {
-        //        _stageCells[CurrentStage].Remove(materials);
-        //    }
-
-        //    if (_stageCells[CurrentStage].Count <= 0)
-        //    {
-        //        CurrentStage++;
-        //        CurrentCount = 0;
-        //    }
-        //}
+        CurrnetElementsCount++;
     }
 
-    //public int GetMaterialCount(Materials material)
-    //{
-    //    return _stageCount[CurrentStage][material];
-    //}
+    public bool CheckIsComplete(Action callback)
+    {
+        var result = CurrnetElementsCount >= MaxElementsCount;
 
-    //public void BuildElement(Transform target, float speed)
-    //{
-    //    if(target == null)
-    //    {
-    //        return;
-    //    }
+        if (result)
+        {
+            StartCoroutine(CompleteHouse(callback));
+        }
 
-    //    var brick = _cellsBricks.Dequeue();
-    //    brick.PutBrick(target, speed);
-    //}
+
+        return result;
+    }
+
+    private IEnumerator VolumeFxPlay(AudioSource audioSource)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!audioSource.isPlaying)
+            {
+                PoolService.Instance.VolumeFXPool.Despawn(audioSource);
+                break;
+            }
+        }
+    }
+
+    private IEnumerator CompleteHouse(Action callback)
+    {
+        yield return new WaitForSeconds(2f);
+        callback?.Invoke();
+    }
+
+    
 
     [ContextMenu("Hide")]
     public void HideBricks()
@@ -208,5 +176,13 @@ public class House : MonoBehaviour
         {
             buildMaterials[i].GetComponent<MeshRenderer>().enabled = true;
         }
+    }
+
+    [Serializable]
+    private class StageEventObjects
+    {
+        public int stageNumber;
+        public GameObject eventObject;
+        public ParticleSystem effect;
     }
 }

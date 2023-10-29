@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Warehouse : MonoBehaviour
 {
-    [SerializeField] private GameObject _brickPrefab;
+    [SerializeField] private GameObject _prefabMaterial;
     [SerializeField] private float _delay;
     [SerializeField] private Materials _material;
 
@@ -32,9 +32,9 @@ public class Warehouse : MonoBehaviour
 
     private IEnumerator PickUpBrick(Inventory inventory)
     {
-        ObjectPool pool = PoolService.Instance.GetPool(_brickPrefab);
+        ObjectPool pool = PoolService.Instance.GetPool(_prefabMaterial);
 
-        while (inventory.CurrentCount < UpgradePlayer.Instance.MaxCount)
+        while (inventory.CurrentCount < UpgradePlayer.Instance.MaxCount & (inventory.Material == Materials.None | inventory.Material == _material))
         {
             yield return new WaitForSeconds(_delay);
         

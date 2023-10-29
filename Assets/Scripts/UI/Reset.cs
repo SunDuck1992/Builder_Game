@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Reset : MonoBehaviour
 {
-
-
     public void ReLoad(int scene)
     {
         SceneManager.LoadScene(scene);

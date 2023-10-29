@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Linq;
 
 public class BuildPanel : MonoBehaviour
 {
     [SerializeField] private List<BuildProgress> _buildProgresses;
-    [SerializeField] private TextMeshProUGUI _stageText;
+    [SerializeField] private TextMeshProUGUI _houseProgressText;
     [SerializeField] private BuildPoint _buildPoint;
+    [SerializeField] private Slider _progressSlider;
 
-    //private ConstructionSite _construction;
+    private ConstructionSite _construction;
 
     private void Awake()
     {
@@ -20,14 +22,21 @@ public class BuildPanel : MonoBehaviour
     private void OnDestroy()
     {
         _buildPoint.OnBuild -= Setup;
+
+        _construction.OnHouseBuild -= ShowHouseBuildProgress;
+        _construction.OnBuild -= ShowProgress;
+        _construction.OnCompleteStage -= OnCompleteStage;
     }
+
     public void Setup(ConstructionSite constructionSite)
     {
         constructionSite.OnBuild += ShowProgress;
-        constructionSite.OnComplete += OnCompleteStage;
-        //_construction = constructionSite;
-        ShowMaterial();
+        constructionSite.OnCompleteStage += OnCompleteStage;
+        constructionSite.OnHouseBuild += ShowHouseBuildProgress;
 
+        _construction = constructionSite;
+        ShowMaterial();
+        ShowHouseBuildProgress(constructionSite.House.CurrnetElementsCount, constructionSite.House.MaxElementsCount);
     }
 
     private void ShowProgress(Materials material,int currentCount, int maxCount)
@@ -42,12 +51,13 @@ public class BuildPanel : MonoBehaviour
 
     private void OnCompleteStage()
     {
-        _stageText.text = _buildPoint.Construction.House.CurrentStage.ToString();
         ShowMaterial();
     }
 
     private void ShowMaterial()
     {
+        if (!_buildPoint.Construction.House.IsCanBuild) return;
+
         _buildProgresses.ForEach(x =>
         {
             if (_buildPoint.Construction.House.StageMaterials.Contains(x.Materials))
@@ -61,5 +71,11 @@ public class BuildPanel : MonoBehaviour
                 x.gameObject.SetActive(false);
             }
         });
+    }
+
+    private void ShowHouseBuildProgress(int current, int maxCount)
+    {
+        _houseProgressText.text = $"{current} / {maxCount}";
+        _progressSlider.value = current / (float)maxCount;
     }
 }

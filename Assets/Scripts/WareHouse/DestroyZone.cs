@@ -35,5 +35,7 @@ public class DestroyZone : MonoBehaviour
 
             inventory.ThrowOutItem();
         }
+
+        //material = reload()
     }
 }

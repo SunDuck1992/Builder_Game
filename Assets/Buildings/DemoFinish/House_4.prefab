@@ -16053,6 +16053,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _root: {fileID: 1710147889509020203}
+  _stageEventObjects: []
+  _constructionSite: {fileID: 7548317028145136887}
 --- !u!1 &7548317029255433034
 GameObject:
   m_ObjectHideFlags: 0

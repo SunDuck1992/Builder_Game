@@ -2968,6 +2968,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _root: {fileID: 3018830743026285373}
+  _constructionSite: {fileID: 7197823867420916717}
+  _stageEventObjects:
+  - stageNumber: 2
+    eventObject: {fileID: 4480514615737867625}
+    effect: {fileID: 0}
 --- !u!1 &2662098747610733773
 GameObject:
   m_ObjectHideFlags: 0

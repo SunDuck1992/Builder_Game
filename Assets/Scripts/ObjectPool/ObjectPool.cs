@@ -19,10 +19,10 @@ public class ObjectPool
     {
         if(_pool.Count > 0)
         {
-            GameObject @object = _pool.Last.Value;
-            @object.SetActive(true);
+            GameObject item = _pool.Last.Value;
+            item.SetActive(true);
             _pool.RemoveLast();
-            return @object;
+            return item;
         }
 
         var result = MonoBehaviour.Instantiate(_prefab);

@@ -27,6 +27,7 @@ public class PoolService
     }
 
     public FXPool FxPool { get; set; }
+    public VolumeFXPool VolumeFXPool { get; set; }
 
     public void AddPool(GameObject prefab)
     {

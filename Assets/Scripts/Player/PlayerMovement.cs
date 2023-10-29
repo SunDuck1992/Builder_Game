@@ -19,14 +19,14 @@ public class PlayerMovement : MonoBehaviour
     private const string SpeedMultyPlie = "speedMulti";
 
     private Rigidbody _rigidbody;
-    private Animator _animator;
     private Vector3 movement;
-   
+    public Animator Animator { get; set; }
+
 
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _animator = GetComponentInChildren<Animator>();
+        //Animator = GetComponentInChildren<Animator>();
     }
 
     private void FixedUpdate()
@@ -44,19 +44,17 @@ public class PlayerMovement : MonoBehaviour
         //zDirection = _joystick.Vertical;
 
         movement = new Vector3(xDirection, 0, zDirection);
-        _animator.SetFloat(SpeedMultyPlie, UpgradePlayer.Instance.MultiplieSpeed);
-
-        //_rigidbody.MovePosition(_rigidbody.position + movement * _speed * UpgradePlayer.Instance.MultiplieSpeed * Time.fixedDeltaTime);
-
+        Animator.SetFloat(SpeedMultyPlie, UpgradePlayer.Instance.MultiplieSpeed);
         _agent.speed = _speed * UpgradePlayer.Instance.MultiplieSpeed;
         _agent.velocity = movement.normalized * _agent.speed;
+
         if (xDirection != 0 || zDirection != 0)
         {
-            _animator.SetBool(HashPlayerAnimations.Walk, true);
+            Animator.SetBool(HashPlayerAnimations.Walk, true);
         }
         else
         {
-            _animator.SetBool(HashPlayerAnimations.Walk, false);
+            Animator.SetBool(HashPlayerAnimations.Walk, false);
         }
     }
 
@@ -65,9 +63,7 @@ public class PlayerMovement : MonoBehaviour
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement);
-            //_rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, toRotation, _rotationSpeed));
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, _rotationSpeed);
-            //transform.forward = (transform.position +  movement) - transform.position;
         }
     }
 }

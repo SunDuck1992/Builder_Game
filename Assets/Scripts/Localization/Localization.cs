@@ -11,10 +11,6 @@ public class Localization : MonoBehaviour
     private void Start()
     {
         LocalizationData localization = new LocalizationData();
-
-        localization.localKeys.Add(new LocalKeyValue() { Key = "ключ", Value = "значение" });
-        localization.localKeys.Add(new LocalKeyValue() { Key = "ключ - 1", Value = "значение2" });
-
         string json = JsonUtility.ToJson(localization);
         File.WriteAllText(Application.streamingAssetsPath + "/Localization.json", json);
     }

@@ -21,7 +21,6 @@ public class FollowText : MonoBehaviour
             return;
         }
 
-        //transform.position = _target.position;
         _target.position = Camera.main.WorldToScreenPoint(_pivot.position);
     }
 

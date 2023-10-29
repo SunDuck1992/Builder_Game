@@ -6,7 +6,9 @@ using UnityEngine;
 public enum FXType
 {
     None,
-    Build
+    TakeBlock,
+    PutBlock
+     
 }
 
 [CreateAssetMenu(fileName = nameof(FXResourses), menuName = "Data/" + nameof(FXResourses))]

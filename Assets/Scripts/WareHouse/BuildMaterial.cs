@@ -64,9 +64,51 @@ public class BuildMaterial : MonoBehaviour
             yield return null;
         }
 
+        var fx = PoolService.Instance.FxPool.Spawn(FXType.PutBlock);
+        fx.transform.position = transform.parent.position;
+        StartCoroutine(FxPlay(fx.GetComponent<ParticleSystem>()));
+
         PoolService.Instance.GetPool(target.gameObject).DeSpawn(target.gameObject);
         target.localScale = scale;
         GetComponent<MeshRenderer>().enabled = true;
         PayReward();
+    }
+
+    private IEnumerator FxPlay(ParticleSystem particle)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!particle.isPlaying)
+            {
+                PoolService.Instance.FxPool.Despawn(particle);
+                break;
+            }
+        }
+    }
+
+    [ContextMenu("SetReward")]
+    public void ShowBricks()
+    {
+        var house = transform.GetComponentInParent<House>();
+        var buildMaterials = house.GetComponentsInChildren<BuildMaterial>();
+       
+
+        for (int i = 0; i < buildMaterials.Length; i++)
+        {
+            switch (buildMaterials[i].Materials)
+            {
+                case Materials.Brick:
+                    buildMaterials[i]._reward = 10;
+                    break;
+                case Materials.Board:
+                    buildMaterials[i]._reward = 10;
+                    break;
+                case Materials.Roof:
+                    buildMaterials[i]._reward = 10;
+                    break;
+            }
+        }
     }
 }

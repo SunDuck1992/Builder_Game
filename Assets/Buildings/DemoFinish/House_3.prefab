@@ -372,6 +372,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _root: {fileID: 5162775091827575101}
+  _constructionSite: {fileID: 3210409353667787013}
+  _stageEventObjects: []
 --- !u!1001 &177611205572895725
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -19,4 +19,6 @@ public class Player : MonoBehaviour
         UpgradePlayer.Instance.ChangeMoney(_money);
     }
 
+
+
 }

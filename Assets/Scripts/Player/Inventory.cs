@@ -8,17 +8,16 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     [SerializeField] private Transform _handPosition;
-    [SerializeField] private FollowText _text;
     [SerializeField] private FXResourses _fxData;
 
     private LinkedList<GameObject> _itemsList = new();
     private readonly float _distanceBetween = 0.25f;
 
     public int CurrentCount => _itemsList.Count;
+    public Materials Material { get; private set; }
 
     public event Action<int, int> OnAdd;
 
-    public Materials Material { get; private set; }
 
     private void Start()
     {
@@ -27,8 +26,7 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(GameObject item, Materials material)
     {
-
-        if(Material == Materials.None)
+        if (Material == Materials.None)
         {
             Material = material;
         }
@@ -38,8 +36,11 @@ public class Inventory : MonoBehaviour
             SortList(item);
             _itemsList.AddLast(item);
 
-            var fx = PoolService.Instance.FxPool.Spawn(FXType.Build);
+            var fx = PoolService.Instance.FxPool.Spawn(FXType.TakeBlock);
+            var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.TakeBlock);
             fx.transform.position = item.transform.position;
+
+            StartCoroutine(VolumeFxPlay(volumeFX));
             StartCoroutine(FxPlay(fx.GetComponent<ParticleSystem>()));
 
             UpdateCounter();
@@ -51,7 +52,7 @@ public class Inventory : MonoBehaviour
 
     private void SortList(GameObject item)
     {
-        if(_itemsList.Count > 0)
+        if (_itemsList.Count > 0)
         {
             Vector3 offset = _itemsList.Last.Value.transform.position + Vector3.up * _distanceBetween;
             item.transform.position = offset;
@@ -63,9 +64,6 @@ public class Inventory : MonoBehaviour
 
         item.transform.SetParent(_handPosition);
         item.transform.localRotation = Quaternion.identity;
-
-
-        //item.transform.localScale = Vector3.one * 36;
     }
 
     public Transform GetItems()
@@ -74,7 +72,7 @@ public class Inventory : MonoBehaviour
         _itemsList.RemoveLast();
         item.transform.SetParent(null);
 
-        if(_itemsList.Count <= 0)
+        if (_itemsList.Count <= 0)
         {
             Material = Materials.None;
         }
@@ -90,9 +88,16 @@ public class Inventory : MonoBehaviour
         _itemsList.RemoveLast();
 
         PoolService.Instance.GetPool(item).DeSpawn(item);
+       
 
-        Material = Materials.None;
+        var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.ThrowOutTrash);
+        volumeFX.volume = 0.1f;
+        StartCoroutine(VolumeFxPlay(volumeFX));
 
+        if(_itemsList.Count <= 0)
+        {
+            Material = Materials.None;
+        }
         UpdateCounter();
     }
 
@@ -120,6 +125,20 @@ public class Inventory : MonoBehaviour
             if (!particle.isPlaying)
             {
                 PoolService.Instance.FxPool.Despawn(particle);
+                break;
+            }
+        }
+    }
+
+    private IEnumerator VolumeFxPlay(AudioSource audioSource)
+    {
+        while (true)
+        {
+            yield return null;
+
+            if (!audioSource.isPlaying)
+            {
+                PoolService.Instance.VolumeFXPool.Despawn(audioSource);
                 break;
             }
         }
