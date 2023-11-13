@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int _money;
-
     private Inventory _inventory;
 
     public Inventory Inventory => _inventory;
@@ -16,9 +14,5 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _inventory = GetComponent<Inventory>();
-        UpgradePlayer.Instance.ChangeMoney(_money);
     }
-
-
-
 }

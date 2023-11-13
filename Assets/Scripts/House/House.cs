@@ -14,6 +14,8 @@ public class House : MonoBehaviour
     private List<StageInfo> _stages = new List<StageInfo>();
     private HouseProgress _saveData;
 
+    public event Action OnCompleteHouse;
+
     public bool IsCanBuild => CurrentStage < _stages.Count;
     public int CurrentStage { get; private set; }
     public int CurrnetElementsCount { get; private set; }
@@ -52,9 +54,9 @@ public class House : MonoBehaviour
 
                 for (int j = 0; j < materials.Length; j++)
                 {
-                    stageInfo.AddMaterial(materials[j], _saveData.ContainTo(materials[j]));
+                    stageInfo.AddMaterial(materials[j], _saveData.ContainTo(materials[j], _stages.Count));
 
-                    if (_saveData.ContainTo(materials[j]))
+                    if (_saveData.ContainTo(materials[j], _stages.Count))
                     {
                         CurrnetElementsCount++;
                     }
@@ -92,7 +94,13 @@ public class House : MonoBehaviour
             {
                 // fx
                 data.eventObject.SetActive(true);
-                data.effect.Play();
+
+                foreach(ParticleSystem particle in data.effects)
+                {
+                    particle.Play();
+                }
+
+                //data.effect.Play();
                 //Debug.Log("noLoad");
             }
 
@@ -115,7 +123,7 @@ public class House : MonoBehaviour
         var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.InstallBlock);
         StartCoroutine(VolumeFxPlay(volumeFX));
 
-        _saveData.Save(element);
+        _saveData.Save(element, CurrentStage);
         string json = JsonUtility.ToJson(_saveData);
         PlayerPrefs.SetString("house", json);
         CurrnetElementsCount++;
@@ -127,9 +135,9 @@ public class House : MonoBehaviour
 
         if (result)
         {
+            OnCompleteHouse?.Invoke();
             StartCoroutine(CompleteHouse(callback));
         }
-
 
         return result;
     }
@@ -150,7 +158,7 @@ public class House : MonoBehaviour
 
     private IEnumerator CompleteHouse(Action callback)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         callback?.Invoke();
     }
 
@@ -183,6 +191,6 @@ public class House : MonoBehaviour
     {
         public int stageNumber;
         public GameObject eventObject;
-        public ParticleSystem effect;
+        public List<ParticleSystem> effects;
     }
 }

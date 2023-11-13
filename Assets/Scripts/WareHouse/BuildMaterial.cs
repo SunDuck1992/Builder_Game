@@ -35,6 +35,7 @@ public class BuildMaterial : MonoBehaviour
     public void PayReward()
     {
         UpgradePlayer.Instance.ChangeMoney(_reward * UpgradePlayer.Instance.MultiplieMoney);
+        UpgradePlayer.Instance.AddScore();
     }
 
     private IEnumerator PutToPosition(Transform target, float speed)

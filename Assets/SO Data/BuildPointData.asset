@@ -14,3 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _housePrefabs:
   - {fileID: 5169930611411812269, guid: c678e4808be0b4442ab13e2402a95687, type: 3}
+  - {fileID: 3796405119179172833, guid: a4a0723fa0b458a42b7aa6119443be0e, type: 3}
+  - {fileID: 4629416473948500562, guid: 2a4693730c1b16547b546cc70c4e5ac9, type: 3}
+  - {fileID: 7548317029254763514, guid: 097c3e2fcd0308245a33cebabcb32275, type: 3}
+  - {fileID: 4915549806676524504, guid: ae3df35564096424ebdba948d53296c7, type: 3}
+  - {fileID: 3168392819247258096, guid: 42405e5a0cad3bb468926bbf1f017a26, type: 3}
+  - {fileID: 5461755308025269239, guid: dd0a040dfe97f8e42a4136cfdfa1ef15, type: 3}
+  - {fileID: 2788936209127373114, guid: f098fcc55e380844ca83458de5b194e0, type: 3}
+  - {fileID: 8447038317900500083, guid: 1daed4fcb9038a74a8f42a2a9a825dca, type: 3}
+  - {fileID: 5061702630951103991, guid: 9a1fc2a9782f7744ab918f923cc26699, type: 3}
+  - {fileID: 2454132442352042637, guid: a1167b3e1df65a04b8b9c851c0c7f3b1, type: 3}

@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _agent.speed = _speed * UpgradePlayer.Instance.MultiplieSpeed;
         //Animator = GetComponentInChildren<Animator>();
     }
 

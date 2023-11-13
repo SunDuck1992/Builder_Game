@@ -7,6 +7,13 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene(1);
+        if (PlayerPrefs.HasKey("scene_name"))
+        {
+            SceneManager.LoadScene(PlayerPrefs.GetString("scene_name"));
+        }
+        else
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 }

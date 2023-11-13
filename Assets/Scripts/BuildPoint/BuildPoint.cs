@@ -11,9 +11,13 @@ public class BuildPoint : MonoBehaviour
 
     public ConstructionSite Construction { get; private set; }
     public event Action<ConstructionSite> OnBuild;
+
     void Start()
     {
-        House house = _data.HousePrefabs[Random.Range(0, _data.HousePrefabs.Count)];
+        
+        int houseNumber = PlayerPrefs.GetInt("houseNumber", Random.Range(0, _data.HousePrefabs.Count));
+        House house = _data.HousePrefabs[houseNumber];
+        //_data.RemoveHouse(house);
         var building = Instantiate(house, transform.position, transform.rotation);
         Construction = building.ConstructionSite;
         OnBuild?.Invoke(Construction);
@@ -21,5 +25,7 @@ public class BuildPoint : MonoBehaviour
         //PoolService.Instance.AddPool(_fXData.GetFX(FXType.Build).gameObject);
         PoolService.Instance.FxPool = new FXPool(_fXData);
         PoolService.Instance.VolumeFXPool = new VolumeFXPool(_volumeFXResources);
+
+        PlayerPrefs.SetInt("houseNumber", houseNumber);
     }
 }

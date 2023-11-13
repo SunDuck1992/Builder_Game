@@ -16,6 +16,7 @@ public class BuildPanel : MonoBehaviour
 
     private void Awake()
     {
+        _buildPoint = FindObjectOfType<BuildPoint>();
         _buildPoint.OnBuild += Setup;
     }
 

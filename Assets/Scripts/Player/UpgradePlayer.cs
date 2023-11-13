@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class UpgradePlayer
@@ -9,12 +10,23 @@ public class UpgradePlayer
 
     public event Action OnUpgrade;
     public event Action<int> OnChangeMoney;
+    public event Action<int> OnchangeScore;
 
     private UpgradePlayer()
     {
         //MaxCount = 5;
-        MultiplieSpeed = 1f;
+        MultiplieSpeed = 1f ;
         MultiplieMoney = 1;
+        Money = PlayerPrefs.GetInt("money", 1500);
+        StatisticMoney = PlayerPrefs.GetInt("s_money");
+        Score = PlayerPrefs.GetInt("score");
+        StatisticScore = PlayerPrefs.GetInt("s_score");
+        UpgradeCountLevel = PlayerPrefs.GetInt(nameof(UpgradeCountLevel));
+        UpgradeSpeedLevel = PlayerPrefs.GetInt(nameof(UpgradeSpeedLevel));
+        UpgradeMoneyLevel = PlayerPrefs.GetInt(nameof(UpgradeMoneyLevel));
+        MultiplieSpeed += UpgradeSpeedLevel * 0.1f;
+        MultiplieMoney += UpgradeMoneyLevel;
+        //OnChangeMoney?.Invoke(Money);
     }
 
     public static UpgradePlayer Instance
@@ -36,8 +48,10 @@ public class UpgradePlayer
     public int UpgradeMoneyLevel { get; private set; }
     public int MaxCount => 5 + UpgradeCountLevel;
     public float MultiplieSpeed { get; private set; }
-
     public int MultiplieMoney { get; private set; }
+    public int StatisticMoney { get; set; }
+    public int StatisticScore { get; set; }
+    public int Score { get; private set; }
 
     public void ApplayUpgrade(Upgrade upgrade, int cost)
     {
@@ -64,6 +78,8 @@ public class UpgradePlayer
             OnUpgrade?.Invoke();
             ChangeMoney(-cost);
         }
+
+        PlayerPrefs.SetInt(nameof(UpgradeCountLevel), UpgradeCountLevel);
     }
 
     private void UpgradeSpeed(int cost)
@@ -74,6 +90,8 @@ public class UpgradePlayer
             MultiplieSpeed += 0.1f;
             ChangeMoney(-cost);
         }
+
+        PlayerPrefs.SetInt(nameof(UpgradeSpeedLevel), UpgradeSpeedLevel);
     }
 
     private void UpgradeMoney(int cost)
@@ -84,11 +102,40 @@ public class UpgradePlayer
             MultiplieMoney += 1;
             ChangeMoney(-cost);
         }
+
+        PlayerPrefs.SetInt(nameof(UpgradeMoneyLevel), UpgradeMoneyLevel);
     }
 
     public void ChangeMoney(int moneyDelta)
     {
         Money += moneyDelta;
+        PlayerPrefs.SetInt("money", Money);
+        OnChangeMoney?.Invoke(Money);
+
+        if (moneyDelta > 0)
+        {
+            StatisticMoney += moneyDelta;
+            PlayerPrefs.SetInt("s_money", StatisticMoney);
+        }
+    }
+
+    public bool CheckMoney(int cost)
+    {
+        return Money >= cost;
+    }
+
+    public void AddScore()
+    {
+        Score++;
+        StatisticScore++;
+        PlayerPrefs.SetInt("score", Score);
+        PlayerPrefs.SetInt("s_score", StatisticScore);
+        OnchangeScore?.Invoke(Score);
+    }
+
+    public void Refresh()
+    {
+        OnchangeScore?.Invoke(Score);
         OnChangeMoney?.Invoke(Money);
     }
 }
