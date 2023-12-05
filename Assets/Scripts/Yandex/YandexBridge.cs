@@ -2,22 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Agava.YandexGames;
+using UnityEngine.SceneManagement;
 
-public class YandexBridge : MonoBehaviour
+public sealed class YandexBridge : MonoBehaviour
 {
     public static YandexBridge Instance;
 
+    private void Awake()
+    {
+        YandexGamesSdk.CallbackLogging = true;
+    }
+
     private IEnumerator Start()
     {
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+
 #if !UNITY_WEBGL || UNITY_EDITOR
         yield break;
 #endif
-        yield return YandexGamesSdk.Initialize();
+        yield return YandexGamesSdk.Initialize(LoadScene);
+    }
 
-        if (PlayerAccount.IsAuthorized == false)
-            PlayerAccount.StartAuthorizationPolling(1500);
-
+    private void LoadScene()
+    {
+        YandexGamesSdk.GameReady();
+        SceneManager.LoadScene(1);
     }
 }

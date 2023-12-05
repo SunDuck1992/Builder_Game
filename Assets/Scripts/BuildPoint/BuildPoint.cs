@@ -14,9 +14,16 @@ public class BuildPoint : MonoBehaviour
 
     void Start()
     {
-        
+#if !UNITY_EDITOR
+        VideoAd.Show();
+#endif
         int houseNumber = PlayerPrefs.GetInt("houseNumber", Random.Range(0, _data.HousePrefabs.Count));
         House house = _data.HousePrefabs[houseNumber];
+
+        if (!PlayerPrefs.HasKey("startHouse"))
+        {
+            house = _data.StartHouse;
+        }
         //_data.RemoveHouse(house);
         var building = Instantiate(house, transform.position, transform.rotation);
         Construction = building.ConstructionSite;

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class EndLevel : MonoBehaviour
 {
-    [SerializeField] private Object[] _scenes;
+    [SerializeField] private string[] _sceneNames;
     [SerializeField] private BuildPoint _buildPoint;
     [SerializeField] private GameObject _root;
     [SerializeField] private TextMeshProUGUI _money;
@@ -27,6 +27,8 @@ public class EndLevel : MonoBehaviour
 
     public void NextLevel()
     {
+
+        Debug.Log("@Next!!");
         UpgradePlayer.Instance.StatisticMoney = 0;
         UpgradePlayer.Instance.StatisticScore = 0;
         PlayerPrefs.DeleteKey("s_money");
@@ -34,9 +36,11 @@ public class EndLevel : MonoBehaviour
         PlayerPrefs.DeleteKey("house");
         PlayerPrefs.DeleteKey("houseNumber");
         Time.timeScale = 1f;
-        var scene = _scenes[Random.Range(0, _scenes.Length)];
-        SceneManager.LoadScene(scene.name);
-        PlayerPrefs.SetString("scene_name", scene.name);
+        var scene = _sceneNames[Random.Range(0, _sceneNames.Length)];
+        Debug.Log("@Scene!!");
+        SceneManager.LoadScene(scene);
+        PlayerPrefs.SetString("scene_name", scene);
+        Debug.Log("@End!!");
     }
 
     private void Setup(ConstructionSite constructionSite)

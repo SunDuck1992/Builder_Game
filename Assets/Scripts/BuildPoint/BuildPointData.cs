@@ -6,9 +6,12 @@ using UnityEngine;
 
 public class BuildPointData : ScriptableObject
 {
-    [SerializeField] private List<House> /*House[]*/ _housePrefabs;
+    [SerializeField] private List<House> _housePrefabs;
+    [SerializeField] private House _startHouse;
+
     
     public IReadOnlyList<House> HousePrefabs => _housePrefabs;
+    public House StartHouse => _startHouse;
 
     public void RemoveHouse(House house)
     {

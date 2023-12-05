@@ -159,6 +159,7 @@ public class House : MonoBehaviour
     private IEnumerator CompleteHouse(Action callback)
     {
         yield return new WaitForSeconds(3f);
+        PlayerPrefs.SetInt("startHouse", 0);
         callback?.Invoke();
     }
 

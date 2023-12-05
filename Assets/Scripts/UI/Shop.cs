@@ -33,21 +33,25 @@ public class Shop : MonoBehaviour
         {
             if (PlayerPrefs.HasKey($"skin_{index}"))
             {
-                // Если ключ есть, то рекламу не показыввем, просто переключаем скин
+                ChangeSkin(skinSettings.gameObject);
+                ChangeButtonSprite(index);
             }
             else
             {
-                // Если ключа нет, то показываем рекламу и разблокируем скин
+#if !UNITY_EDITOR
+                VideoAd.Show(() =>
+                {
+                    ChangeSkin(skinSettings.gameObject);
+                    ChangeButtonSprite(index);
+                });
+#endif
             }
-
-            ChangeSkin(skinSettings.gameObjec);
-            ChangeButtonSprite(index);
         }
         else
         {
             if (PlayerPrefs.HasKey($"skin_{index}"))
             {
-                ChangeSkin(skinSettings.gameObjec);
+                ChangeSkin(skinSettings.gameObject);
                 ChangeButtonSprite(index);
             }
             else
@@ -55,11 +59,11 @@ public class Shop : MonoBehaviour
                 if (UpgradePlayer.Instance.CheckMoney(skinSettings.cost))
                 {
                     UpgradePlayer.Instance.ChangeMoney(-skinSettings.cost);
-                    ChangeSkin(skinSettings.gameObjec);
+                    ChangeSkin(skinSettings.gameObject);
                     ChangeButtonSprite(index);
                 }
-            }          
-        }     
+            }
+        }
     }
 
     private void ChangeSkin(GameObject gameObject)
@@ -94,7 +98,7 @@ public class Shop : MonoBehaviour
     [Serializable]
     private class SkinSettings
     {
-        public GameObject gameObjec;
+        public GameObject gameObject;
         public int cost;
         public bool isAds;
     }
