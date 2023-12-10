@@ -5,6 +5,8 @@ using UnityEngine;
 public class DestroyZone : MonoBehaviour
 {
     [SerializeField] private float _delay;
+    [SerializeField] private SpriteRenderer _triggerZone;
+    [SerializeField] private Color _targetColor;
 
     private Coroutine _coroutine;
 
@@ -12,6 +14,7 @@ public class DestroyZone : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = _targetColor;
             _coroutine = StartCoroutine(DestroyMaterial(player.Inventory));
         }
     }
@@ -20,6 +23,8 @@ public class DestroyZone : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = Color.white;
+
             if (_coroutine != null)
             {
                 StopCoroutine(_coroutine);

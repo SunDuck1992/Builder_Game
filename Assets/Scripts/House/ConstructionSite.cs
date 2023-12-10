@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class ConstructionSite : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer _triggerZone;
+    [SerializeField] private Color _targetColor;
     [SerializeField] private House _house;
     [SerializeField] private float _delay;
     [SerializeField] private float _speed;
@@ -24,6 +26,7 @@ public class ConstructionSite : MonoBehaviour
     {
         if (other.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = _targetColor;
             _coroutine = StartCoroutine(BuildHouse(player.Inventory));
         }
     }
@@ -32,6 +35,8 @@ public class ConstructionSite : MonoBehaviour
     {
         if (other.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = Color.white;
+
             if (_coroutine != null)
             {
                 StopCoroutine(_coroutine);

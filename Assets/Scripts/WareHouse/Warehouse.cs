@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Warehouse : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer _triggerZone;
+    [SerializeField] private Color _targetColor;
     [SerializeField] private GameObject _prefabMaterial;
     [SerializeField] private float _delay;
     [SerializeField] private Materials _material;
@@ -15,6 +17,7 @@ public class Warehouse : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = _targetColor;
             _coroutine = StartCoroutine(PickUpBrick(player.Inventory));
         }
     }
@@ -23,6 +26,8 @@ public class Warehouse : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
+            _triggerZone.color = Color.white;            
+
             if (_coroutine != null)
             {
                 StopCoroutine(_coroutine);
