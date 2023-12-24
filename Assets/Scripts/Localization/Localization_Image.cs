@@ -15,6 +15,7 @@ public class Localization_Image : MonoBehaviour
 
     private void Awake()
     {
+#if !UNITY_EDITOR
         string languageCode = YandexGamesSdk.Environment.i18n.lang;
         Debug.Log($"@ - {languageCode}");
 
@@ -33,5 +34,6 @@ public class Localization_Image : MonoBehaviour
                 _imageEN.SetActive(true);
                 break;
         }
+#endif
     }
 }

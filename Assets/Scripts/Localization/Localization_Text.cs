@@ -16,6 +16,7 @@ public class Localization_Text : MonoBehaviour
 
     private void Awake()
     {
+#if !UNITY_EDITOR
         string languageCode = YandexGamesSdk.Environment.i18n.lang;
 
         switch (languageCode)
@@ -33,5 +34,6 @@ public class Localization_Text : MonoBehaviour
                 _englishText.gameObject.SetActive(true);
                 break;
         }
+#endif
     }
 }

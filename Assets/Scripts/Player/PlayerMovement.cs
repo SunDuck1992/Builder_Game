@@ -38,11 +38,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        float xDirection = Input.GetAxisRaw(HorizontalDirection);
-        float zDirection = Input.GetAxisRaw(VerticalDirection);
+        float xDirection = _joystick.Horizontal;
+        float zDirection = _joystick.Vertical;
 
-        //xDirection = _joystick.Horizontal;
-        //zDirection = _joystick.Vertical;
+        if (Input.GetAxisRaw(HorizontalDirection) != 0
+            | Input.GetAxisRaw(VerticalDirection) != 0)
+        {
+            xDirection = Input.GetAxisRaw(HorizontalDirection);
+            zDirection = Input.GetAxisRaw(VerticalDirection);
+        }
 
         movement = new Vector3(xDirection, 0, zDirection);
         Animator.SetFloat(SpeedMultyPlie, UpgradePlayer.Instance.MultiplieSpeed);

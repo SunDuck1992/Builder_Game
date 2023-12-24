@@ -27,7 +27,7 @@ public class EndLevel : MonoBehaviour
 
     public void NextLevel()
     {
-
+        LeaderBoard.SetPlayer(UpgradePlayer.Instance.Score);
         Debug.Log("@Next!!");
         UpgradePlayer.Instance.StatisticMoney = 0;
         UpgradePlayer.Instance.StatisticScore = 0;
