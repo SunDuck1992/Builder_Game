@@ -15,7 +15,10 @@ public class BuildPoint : MonoBehaviour
     void Start()
     {
 #if !UNITY_EDITOR
-        VideoAd.Show();
+        if (PlayerPrefs.HasKey("startHouse"))
+        {
+            VideoAd.Show();
+        }
 #endif
         int houseNumber = PlayerPrefs.GetInt("houseNumber", Random.Range(0, _data.HousePrefabs.Count));
         House house = _data.HousePrefabs[houseNumber];

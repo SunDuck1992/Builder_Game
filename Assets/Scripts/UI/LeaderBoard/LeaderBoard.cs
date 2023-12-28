@@ -6,7 +6,7 @@ using UnityEngine;
 public class LeaderBoard : MonoBehaviour
 {
     private const string AnonymousName = "Anonymous";
-    private const string LeaderboardName = "LeaderboardName";
+    private const string LeaderboardName = "LeaderBoard";
 
     [SerializeField] private LeaderBoardView _leaderBoardView;
 
@@ -50,6 +50,5 @@ public class LeaderBoard : MonoBehaviour
             _leaderBoardView.ConstructLeaderboard(_leaderBoardPlayers);
         });
 #endif
-
     }
 }
