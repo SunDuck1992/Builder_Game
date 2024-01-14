@@ -26,7 +26,7 @@ public class LeaderBoardView : MonoBehaviour
     {
         foreach (var element in _elements)
         {
-            Destroy(element);
+            Destroy(element.gameObject);
         }
 
         _elements = new List<LeaderBoardElement>();

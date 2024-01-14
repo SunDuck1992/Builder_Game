@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class VideoAd
 {
-    private static float _currentVolume;
+    public static bool IsAdsPlayed;
 
     public static void Show(Action rewardCallback = null)
     {
@@ -19,21 +19,22 @@ public static class VideoAd
 
     private static void OnOpenCallback()
     {
-        _currentVolume = AudioListener.volume;
+        IsAdsPlayed = true;
         Time.timeScale = 0f;
         AudioListener.volume = 0f;
-
     }
 
     private static void OnCloseCallback()
     {
+        IsAdsPlayed = false;
         Time.timeScale = 1f;       
-        AudioListener.volume = _currentVolume;
+        AudioListener.volume = PlayerPrefs.GetInt("volumeMusic", 1);
     }
 
     private static void OnCloseCallback(bool flag)
     {
+        IsAdsPlayed = false;
         Time.timeScale = 1f;
-        AudioListener.volume = _currentVolume;
+        AudioListener.volume = PlayerPrefs.GetInt("volumeMusic", 1);
     }
 }

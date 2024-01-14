@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Agava.YandexGames;
 
+
+using PlayerPrefs = UnityEngine.PlayerPrefs;
+
 public class FocusWindow : MonoBehaviour
 {
-    //[SerializeField] private AudioListener _audioListener;
-
     private void OnEnable()
     {
-        Application.focusChanged += OnInBackgroundChangeApp;
+        Application.focusChanged += OnInBackgroundChangeApp;        
     }
 
     private void OnDisable()
@@ -19,8 +20,8 @@ public class FocusWindow : MonoBehaviour
 
     private void OnInBackgroundChangeApp(bool inApp)
     {
-        MuteAudio(!inApp);
-        PauseGame(!inApp);
+        MuteAudio(inApp);
+        PauseGame(inApp);
     }
 
     private void OnInBackgroundChangeWeb(bool isBackground)
@@ -31,7 +32,21 @@ public class FocusWindow : MonoBehaviour
 
     private void MuteAudio(bool value)
     {
-        AudioListener.volume = value ? 0 : 1;
+        if (value)
+        {
+            if (VideoAd.IsAdsPlayed)
+            {
+                AudioListener.volume = 0;
+            }
+            else
+            {
+                AudioListener.volume = PlayerPrefs.GetInt("volumeMusic", 1);
+            }
+        }
+        else
+        {
+            AudioListener.volume = 0;
+        }      
     }
 
     private void PauseGame(bool value)
