@@ -31,6 +31,9 @@ public class LeaderBoard : MonoBehaviour
 #if !UNITY_EDITOR
         if (PlayerAccount.IsAuthorized == false)
             return;
+
+            RequestDataPermission();
+
         Agava.YandexGames.Leaderboard.GetEntries(LeaderboardName, result =>
         {
             for (int i = 0; i < result.entries.Length; i++)
@@ -50,5 +53,27 @@ public class LeaderBoard : MonoBehaviour
             _leaderBoardView.ConstructLeaderboard(_leaderBoardPlayers);
         });
 #endif
+    }
+
+//    public void AuthorizePlayer()
+//    {
+//#if !UNITY_EDITOR
+//        PlayerAccount.Authorize();
+//        RequestDataPermission();
+
+//        if (PlayerAccount.IsAuthorized == false)
+//        {
+//            return;
+//        }
+//#endif
+//    }
+
+    private void RequestDataPermission()
+    {
+        if (PlayerAccount.IsAuthorized)
+        {
+            PlayerAccount.RequestPersonalProfileDataPermission();
+            Debug.Log("Request");
+        }
     }
 }

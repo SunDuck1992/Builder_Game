@@ -21,7 +21,7 @@ public class FocusWindow : MonoBehaviour
     private void OnInBackgroundChangeApp(bool inApp)
     {
         MuteAudio(inApp);
-        PauseGame(inApp);
+        PauseGame(!inApp);
     }
 
     private void OnInBackgroundChangeWeb(bool isBackground)
