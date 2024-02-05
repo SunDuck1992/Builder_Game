@@ -10,7 +10,7 @@ public class FocusWindow : MonoBehaviour
 {
     private void OnEnable()
     {
-        Application.focusChanged += OnInBackgroundChangeApp;        
+        Application.focusChanged += OnInBackgroundChangeApp;
     }
 
     private void OnDisable()
@@ -20,8 +20,11 @@ public class FocusWindow : MonoBehaviour
 
     private void OnInBackgroundChangeApp(bool inApp)
     {
-        MuteAudio(inApp);
-        PauseGame(!inApp);
+        if (!VideoAd.IsAdsPlayed)
+        {
+            MuteAudio(inApp);
+            PauseGame(!inApp);
+        }
     }
 
     private void OnInBackgroundChangeWeb(bool isBackground)
@@ -46,7 +49,7 @@ public class FocusWindow : MonoBehaviour
         else
         {
             AudioListener.volume = 0;
-        }      
+        }
     }
 
     private void PauseGame(bool value)

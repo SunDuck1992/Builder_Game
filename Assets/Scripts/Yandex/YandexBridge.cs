@@ -10,21 +10,27 @@ public sealed class YandexBridge : MonoBehaviour
 
     private void Awake()
     {
-        YandexGamesSdk.CallbackLogging = true;
+        YandexGamesSdk.CallbackLogging = true;   
     }
 
     private IEnumerator Start()
     {
-
 #if !UNITY_WEBGL || UNITY_EDITOR
         yield break;
 #endif
         yield return YandexGamesSdk.Initialize(LoadScene);
     }
 
+    //    private IEnumerator Start()
+    //    {
+    //#if !UNITY_WEBGL || UNITY_EDITOR
+    //        yield break;
+    //#endif
+    //        yield return YandexGamesSdk.Initialize(YandexGamesSdk.GameReady);
+    //    }
+
     private void LoadScene()
     {
-        YandexGamesSdk.GameReady();
         SceneManager.LoadScene(1);
     }
 }
