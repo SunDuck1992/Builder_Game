@@ -37,5 +37,6 @@ public class BuildPoint : MonoBehaviour
         PoolService.Instance.VolumeFXPool = new VolumeFXPool(_volumeFXResources);
 
         PlayerPrefs.SetInt("houseNumber", houseNumber);
+        Debug.Log("BuildPoint");
     }
 }

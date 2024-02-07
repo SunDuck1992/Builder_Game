@@ -35,6 +35,7 @@ public class EndLevel : MonoBehaviour
         PlayerPrefs.DeleteKey("s_score");
         PlayerPrefs.DeleteKey("house");
         PlayerPrefs.DeleteKey("houseNumber");
+        PlayerPrefs.SetString("needChange", "no");
         Time.timeScale = 1f;
         var scene = _sceneNames[Random.Range(0, _sceneNames.Length)];
         Debug.Log("@Scene!!");
@@ -55,5 +56,6 @@ public class EndLevel : MonoBehaviour
         _score.text = UpgradePlayer.Instance.StatisticScore.ToString();
         Time.timeScale = 0f;
         _root.SetActive(true);
+        PlayerPrefs.SetString("needChange", "yes");
     }
 }
