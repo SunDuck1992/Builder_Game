@@ -10,6 +10,7 @@ public class HouseProgress
 
     public List<string> name = new();
     public int currentStage;
+
     public bool ContainTo(BuildMaterial material, int currentStage)
     {
         return name.Contains(string.Format(Tamplate, material.transform.parent.name, currentStage));

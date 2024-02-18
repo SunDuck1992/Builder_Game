@@ -5,12 +5,41 @@ using UnityEngine;
 
 public class LeaderBoard : MonoBehaviour
 {
-    private const string AnonymousName = "Anonymous";
     private const string LeaderboardName = "LeaderBoard";
+    private const string EnglishCode = "en";
+    private const string RussianCode = "ru";
+    private const string TurkishCode = "tr";
+    private const string AnonymousRu = "Аноним";
+    private const string AnonymousEn = "Anonymous";
+    private const string AnonymousTr = "Anonim";
 
     [SerializeField] private LeaderBoardView _leaderBoardView;
 
+    private string AnonymousName;
     private List<LeaderBoardPlayer> _leaderBoardPlayers = new();
+
+    private void Awake()
+    {
+#if !UNITY_EDITOR
+        string languageCode = YandexGamesSdk.Environment.i18n.lang;
+
+        switch (languageCode)
+        {
+            case RussianCode:
+                AnonymousName = AnonymousRu;
+                break;
+            case EnglishCode:
+                AnonymousName = AnonymousEn;
+                break;
+            case TurkishCode:
+                AnonymousName = AnonymousTr;
+                break;
+            default:
+                AnonymousName = AnonymousEn;
+                break;
+        }
+#endif
+    }
 
     public static void SetPlayer(int score)
     {
@@ -54,19 +83,6 @@ public class LeaderBoard : MonoBehaviour
         });
 #endif
     }
-
-//    public void AuthorizePlayer()
-//    {
-//#if !UNITY_EDITOR
-//        PlayerAccount.Authorize();
-//        RequestDataPermission();
-
-//        if (PlayerAccount.IsAuthorized == false)
-//        {
-//            return;
-//        }
-//#endif
-//    }
 
     private void RequestDataPermission()
     {

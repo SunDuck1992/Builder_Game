@@ -27,16 +27,14 @@ public class BuildPoint : MonoBehaviour
         {
             house = _data.StartHouse;
         }
-        //_data.RemoveHouse(house);
+
         var building = Instantiate(house, transform.position, transform.rotation);
         Construction = building.ConstructionSite;
         OnBuild?.Invoke(Construction);
 
-        //PoolService.Instance.AddPool(_fXData.GetFX(FXType.Build).gameObject);
         PoolService.Instance.FxPool = new FXPool(_fXData);
         PoolService.Instance.VolumeFXPool = new VolumeFXPool(_volumeFXResources);
 
         PlayerPrefs.SetInt("houseNumber", houseNumber);
-        Debug.Log("BuildPoint");
     }
 }

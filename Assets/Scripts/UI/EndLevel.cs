@@ -28,7 +28,6 @@ public class EndLevel : MonoBehaviour
     public void NextLevel()
     {
         LeaderBoard.SetPlayer(UpgradePlayer.Instance.Score);
-        Debug.Log("@Next!!");
         UpgradePlayer.Instance.StatisticMoney = 0;
         UpgradePlayer.Instance.StatisticScore = 0;
         PlayerPrefs.DeleteKey("s_money");
@@ -38,10 +37,8 @@ public class EndLevel : MonoBehaviour
         PlayerPrefs.SetString("needChange", "no");
         Time.timeScale = 1f;
         var scene = _sceneNames[Random.Range(0, _sceneNames.Length)];
-        Debug.Log("@Scene!!");
         SceneManager.LoadScene(scene);
         PlayerPrefs.SetString("scene_name", scene);
-        Debug.Log("@End!!");
     }
 
     private void Setup(ConstructionSite constructionSite)

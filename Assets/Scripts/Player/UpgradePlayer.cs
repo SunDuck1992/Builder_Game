@@ -14,8 +14,7 @@ public class UpgradePlayer
 
     private UpgradePlayer()
     {
-        //MaxCount = 5;
-        MultiplieSpeed = 1f ;
+        MultiplieSpeed = 1f;
         MultiplieMoney = 1;
         Money = PlayerPrefs.GetInt("money", 1500);
         StatisticMoney = PlayerPrefs.GetInt("s_money");
@@ -26,7 +25,6 @@ public class UpgradePlayer
         UpgradeMoneyLevel = PlayerPrefs.GetInt(nameof(UpgradeMoneyLevel));
         MultiplieSpeed += UpgradeSpeedLevel * 0.1f;
         MultiplieMoney += UpgradeMoneyLevel;
-        //OnChangeMoney?.Invoke(Money);
     }
 
     public static UpgradePlayer Instance
@@ -52,6 +50,7 @@ public class UpgradePlayer
     public int StatisticMoney { get; set; }
     public int StatisticScore { get; set; }
     public int Score { get; private set; }
+    public bool isPay { get; private set; }
 
     public void ApplayUpgrade(Upgrade upgrade, int cost)
     {
@@ -77,6 +76,11 @@ public class UpgradePlayer
             UpgradeCountLevel++;
             OnUpgrade?.Invoke();
             ChangeMoney(-cost);
+            isPay = true;
+        }
+        else
+        {
+            isPay = false;
         }
 
         PlayerPrefs.SetInt(nameof(UpgradeCountLevel), UpgradeCountLevel);
@@ -89,6 +93,11 @@ public class UpgradePlayer
             UpgradeSpeedLevel++;
             MultiplieSpeed += 0.1f;
             ChangeMoney(-cost);
+            isPay = true;
+        }
+        else
+        {
+            isPay = false;
         }
 
         PlayerPrefs.SetInt(nameof(UpgradeSpeedLevel), UpgradeSpeedLevel);
@@ -101,6 +110,11 @@ public class UpgradePlayer
             UpgradeMoneyLevel++;
             MultiplieMoney += 1;
             ChangeMoney(-cost);
+            isPay = true;
+        }
+        else
+        {
+            isPay = false;
         }
 
         PlayerPrefs.SetInt(nameof(UpgradeMoneyLevel), UpgradeMoneyLevel);

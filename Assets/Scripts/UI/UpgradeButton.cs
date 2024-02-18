@@ -26,10 +26,14 @@ public class UpgradeButton : MonoBehaviour
     {
         _button.onClick.AddListener(() =>
         {
-            var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.PurchaseImprovment);
-            StartCoroutine(VolumeFxPlay(volumeFX));
-
             UpgradePlayer.Instance.ApplayUpgrade(_upgrade, _cost);
+
+            if (UpgradePlayer.Instance.isPay)
+            {
+                var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.PurchaseImprovment);
+                StartCoroutine(VolumeFxPlay(volumeFX));
+            }
+
             ShowCost();
         });
 

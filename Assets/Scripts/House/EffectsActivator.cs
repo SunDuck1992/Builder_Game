@@ -22,7 +22,6 @@ public class EffectsActivator : MonoBehaviour
         foreach (var particle in _particles)
         {
             particle.Play();
-            Debug.Log("Particle");
         }
     }
 }

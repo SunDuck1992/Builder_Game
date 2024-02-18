@@ -92,20 +92,15 @@ public class House : MonoBehaviour
         {
             if (!isLoad)
             {
-                // fx
                 data.eventObject.SetActive(true);
 
                 foreach(ParticleSystem particle in data.effects)
                 {
                     particle.Play();
                 }
-
-                //data.effect.Play();
-                //Debug.Log("noLoad");
             }
 
             data.eventObject.SetActive(true);
-            //Debug.Log("Load");
         }
     }
 

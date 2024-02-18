@@ -89,7 +89,6 @@ public class Inventory : MonoBehaviour
 
         PoolService.Instance.GetPool(item).DeSpawn(item);
        
-
         var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.ThrowOutTrash);
         volumeFX.volume = 0.1f;
         StartCoroutine(VolumeFxPlay(volumeFX));

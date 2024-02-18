@@ -59,7 +59,6 @@ public class ConstructionSite : MonoBehaviour
             {
                 var volumeFX = PoolService.Instance.VolumeFXPool.Spawn(VolumeFXType.BuildComplete);
                 StartCoroutine(VolumeFxPlay(volumeFX));
-                //OnCompleteBuild?.Invoke();
             }
 
             if (_house.StageMaterials.Count <= 0)
